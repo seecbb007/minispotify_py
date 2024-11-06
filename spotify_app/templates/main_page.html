@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Main Page</title>
+</head>
+<body>
+    <h1>Welcome to the Spotify Search Feature</h1>
+
+    <h2>Search for an Artist</h2>
+    <form method="post">
+        {% comment %} 
+        {% csrf_token %} is used because the form is being submitted via a POST request. 
+        This ensures that the form submission is protected against CSRF attacks, making it more secure.
+        {% endcomment %}
+        {% csrf_token %}
+        <label for="artist_name">Enter Artist Name:</label>
+        <input type="text" name="artist_name" id="artist_name" required>
+        <button type="submit">Search</button>
+    </form>
+    {% comment %} 
+    {% if error %} checks if the variable named error is present in the context and has a value.
+    If True: If error is present and is not empty ，then the content inside the {% if error %} ... {% endif %} block is rendered.
+    If False: If error is not set or is empty， then the content inside the block is not rendered.
+    {% endcomment %}
+    {% if error %}
+        <p>{{ error }}</p>
+    {% elif artist_info %}
+        <h3>Artist Name: {{ artist_name }}</h3>
+        <p>Artist Details:</p>
+        <ul>
+            {% for key, value in artist_info.items %}
+                <li>{{ key }}: {{ value }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</body>
+</html>

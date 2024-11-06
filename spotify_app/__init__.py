@@ -1,0 +1,2 @@
+# The __init__.py file is used to indicate that a directory is a Python package. 
+# Even though it's an empty file, it plays an important role in allowing Python to recognize that directory as a module that can be imported.
