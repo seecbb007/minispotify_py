@@ -1,38 +1,37 @@
-# Import the render function to render templates with context data
 from django.shortcuts import render
-# Import authorization functions to get a Spotify access token
 from .authorization import get_token
-# Import functions to search for artists and songs from the Spotify API
-from .features.search import search_for_artist,search_songs_by_artist
+from .features.search import search
 
-# Define the main view function to handle displaying the main page and searching for artists
+# Main page view function
 def main_page_view(request):
-    # Create an empty context dictionary to store data that will be passed to the template
     context = {}
+    search_functions = search()
     
-    # Check if the request method is POST, indicating that the form was submitted
+    # Handle search if the form is submitted
     if request.method == "POST":
-        # Get the artist name submitted in the form
-        artist_name = request.POST.get("artist_name")
-        # Get an access token for Spotify API authorization
+        search_query = request.POST.get("search_query")
         token = get_token()
-        # Search for the artist using the Spotify API
-        artist_info = search_for_artist(token, artist_name)
-         # Check if the artist was found and if the response contains an 'id'
-        if isinstance(artist_info, dict) and "id" in artist_info:
-            # Add artist information to the context dictionary
-            context['artist_name'] = artist_info["name"]
-            context['artist_info'] = artist_info
+        
+        # Perform searches for artists, tracks, and albums
+        artist_results = search_functions["search_for_artist"](token, search_query)
+        track_results = search_functions["search_for_tracks"](token, search_query)
+        album_results = search_functions["search_for_albums"](token, search_query)
 
-            # Search for sogs by the artist
-            # Search for songs by the artist using the artist ID
-            artist_id = artist_info['id']
-            songs = search_songs_by_artist(token, artist_id)
-            # Add the list of songs to the context dictionary
-            context['songs'] = songs
+        # Add the results to the context
+        if isinstance(artist_results, dict) and "error" in artist_results:
+            context['artist_error'] = "No artists found!"
         else:
-            # If no artist is found, add an error message to the context dictionary
-            context['error'] = "No artist found!"
-    
+            context['artists'] = artist_results
+
+        if isinstance(track_results, dict) and "error" in track_results:
+            context['track_error'] = "No tracks found!"
+        else:
+            context['tracks'] = track_results
+
+        if isinstance(album_results, dict) and "error" in album_results:
+            context['album_error'] = "No albums found!"
+        else:
+            context['albums'] = album_results
+
     # Render the main page with or without search results
     return render(request, "main_page.html", context)

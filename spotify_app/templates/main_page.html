@@ -1,38 +1,78 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Main Page</title>
+    <!-- Link to Tailwind CSS (output.css) -->
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
 </head>
-<body>
-    <h1>Welcome to the Spotify Search Feature</h1>
+<body class="bg-gray-100 text-red-900">
 
-    <h2>Search for an Artist</h2>
-    <form method="post">
-        {% comment %} 
-        {% csrf_token %} is used because the form is being submitted via a POST request. 
-        This ensures that the form submission is protected against CSRF attacks, making it more secure.
-        {% endcomment %}
-        {% csrf_token %}
-        <label for="artist_name">Enter Artist Name:</label>
-        <input type="text" name="artist_name" id="artist_name" required>
-        <button type="submit">Search</button>
-    </form>
-    {% comment %} 
-    {% if error %} checks if the variable named error is present in the context and has a value.
-    If True: If error is present and is not empty ，then the content inside the {% if error %} ... {% endif %} block is rendered.
-    If False: If error is not set or is empty， then the content inside the block is not rendered.
-    {% endcomment %}
-    {% if error %}
-        <p>{{ error }}</p>
-    {% elif artist_info %}
-        <h3>Artist Name: {{ artist_name }}</h3>
-        <p>Artist Details:</p>
-        <ul>
-            {% for key, value in artist_info.items %}
-                <li>{{ key }}: {{ value }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+    <!-- Main Container -->
+    <div class="container mx-auto p-8">
+        <h1 class="text-4xl font-bold text-center mb-6">Spotify Search Feature</h1>
+
+        <!-- Search Form Card -->
+        <div class="bg-white p-6 rounded-lg shadow-md max-w-lg mx-auto">
+            <h2 class="text-2xl font-semibold mb-4">Search Spotify</h2>
+            <form method="post" class="space-y-4">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label for="search_query" class="block text-sm font-medium text-gray-700">Enter Search Query:</label>
+                    <input type="text" name="search_query" id="search_query" class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" required>
+                </div>
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-200 ease-in-out">Search</button>
+            </form>
+
+            <!-- Error or Results Section -->
+            {% if artist_error %}
+                <div class="mt-4 text-red-600 font-semibold">
+                    <p>{{ artist_error }}</p>
+                </div>
+            {% elif artists %}
+                <div class="mt-6">
+                    <h3 class="text-xl font-bold mb-2 text-blue-600">Artists Found:</h3>
+                    <ul class="list-disc list-inside">
+                        {% for artist in artists %}
+                            <li><strong>{{ artist.name }}</strong></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+
+            {% if track_error %}
+                <div class="mt-4 text-red-600 font-semibold">
+                    <p>{{ track_error }}</p>
+                </div>
+            {% elif tracks %}
+                <div class="mt-6">
+                    <h3 class="text-xl font-bold mb-2 text-blue-600">Tracks Found:</h3>
+                    <ul class="list-disc list-inside">
+                        {% for track in tracks %}
+                            <li><strong>{{ track.name }}</strong> - {{ track.artists|join:", " }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+
+            {% if album_error %}
+                <div class="mt-4 text-red-600 font-semibold">
+                    <p>{{ album_error }}</p>
+                </div>
+            {% elif albums %}
+                <div class="mt-6">
+                    <h3 class="text-xl font-bold mb-2 text-blue-600">Albums Found:</h3>
+                    <ul class="list-disc list-inside">
+                        {% for album in albums %}
+                            <li><strong>{{ album.name }}</strong> - {{ album.artists|join:", " }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
 </body>
 </html>
