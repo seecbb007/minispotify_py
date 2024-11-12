@@ -8,71 +8,226 @@
     <!-- Link to Tailwind CSS (output.css) -->
     <link rel="stylesheet" href="{% static 'css/output.css' %}">
 </head>
-<body class="bg-gray-100 text-red-900">
-
+<body class="bg-customBackground text-gray-900">
     <!-- Main Container -->
-    <div class="container mx-auto p-8">
-        <h1 class="text-4xl font-bold text-center mb-6">Spotify Search Feature</h1>
+    <div class="min-h-full">
+        <!-- Navigation Bar -->
+        <nav class="bg-gray-800 w-full">
+            <div class="w-full px-4 sm:px-6 lg:px-8">
+                <div class="flex h-16 items-center justify-between">
+                    <div class="flex items-center flex-1 mr-5">
+                        <div class="shrink-0">
+                            <div class="font-mono text-white">Group_MusicApp</div>
+                        </div>
+                        <div class="hidden md:block flex-1">
+                            <div class="ml-10 flex items-center justify-between w-full">
+                                <div class="flex space-x-4">
+                                    <a href="#" class="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white" aria-current="page">Dashboard</a>
+                                    <a href="#" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Recommendations</a>
+                                    <a href="#" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Top Charts</a>
+                                </div>
+                                <!-- Search Form in Navigation -->
+                                <form method="post" action="{% url 'main_page_view' %}">
+                                    {% csrf_token %}
+                                    <div class="flex gap-2 flex-1 max-w-2xl ml-4">
+                                        <input 
+                                            type="text" 
+                                            name="search_query" 
+                                            id="search_query" 
+                                            class="flex-1 h-10 px-4 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" 
+                                            placeholder="Enter Artist or Tracks or Albums" 
+                                            required
+                                        >
+                                        <button 
+                                            type="submit" 
+                                            class="h-10 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 flex items-center dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                                        >
+                                            Search
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
 
-        <!-- Search Form Card -->
-        <div class="bg-white p-6 rounded-lg shadow-md max-w-lg mx-auto">
-            <h2 class="text-2xl font-semibold mb-4">Search Spotify</h2>
-            <form method="post" class="space-y-4">
-                {% csrf_token %}
-                <div class="mb-4">
-                    <label for="search_query" class="block text-sm font-medium text-gray-700">Enter Search Query:</label>
-                    <input type="text" name="search_query" id="search_query" class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" required>
-                </div>
-                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-200 ease-in-out">Search</button>
-            </form>
-
-            <!-- Error or Results Section -->
-            {% if artist_error %}
-                <div class="mt-4 text-red-600 font-semibold">
-                    <p>{{ artist_error }}</p>
-                </div>
-            {% elif artists %}
-                <div class="mt-6">
-                    <h3 class="text-xl font-bold mb-2 text-blue-600">Artists Found:</h3>
-                    <ul class="list-disc list-inside">
-                        {% for artist in artists %}
-                            <li><strong>{{ artist.name }}</strong></li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            {% endif %}
-
-            {% if track_error %}
-                <div class="mt-4 text-red-600 font-semibold">
-                    <p>{{ track_error }}</p>
-                </div>
-            {% elif tracks %}
-                <div class="mt-6">
-                    <h3 class="text-xl font-bold mb-2 text-blue-600">Tracks Found:</h3>
-                    <ul class="list-disc list-inside">
-                        {% for track in tracks %}
-                            <li><strong>{{ track.name }}</strong> - {{ track.artists|join:", " }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            {% endif %}
-
-            {% if album_error %}
-                <div class="mt-4 text-red-600 font-semibold">
-                    <p>{{ album_error }}</p>
-                </div>
-            {% elif albums %}
-                <div class="mt-6">
-                    <h3 class="text-xl font-bold mb-2 text-blue-600">Albums Found:</h3>
-                    <ul class="list-disc list-inside">
-                        {% for album in albums %}
-                            <li><strong>{{ album.name }}</strong> - {{ album.artists|join:", " }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            {% endif %}
+        <!-- Tabs for Search Result -->
+        <div class="bg-white p-4 border-t">
+            <div class="sm:hidden">
+                <label for="tabs" class="sr-only">Select a tab</label>
+                <form method="post" action="{% url 'main_page_view' %}">
+                    {% csrf_token %}
+                    <select id="tabs" name="active_tab" class="block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500" onchange="this.form.submit()">
+                        <option value="all_results" {% if active_tab == 'all_results' %}selected{% endif %}>All Result</option>
+                        <option value="artists" {% if active_tab == 'artists' %}selected{% endif %}>Artist</option>
+                        <option value="tracks" {% if active_tab == 'tracks' %}selected{% endif %}>Tracks</option>
+                        <option value="albums" {% if active_tab == 'albums' %}selected{% endif %}>Albums</option>
+                    </select>
+                    <input type="hidden" name="search_query" value="{{ request.POST.search_query }}">
+                </form>
+            </div>
+            <div class="hidden sm:block">
+                <form method="post" action="{% url 'main_page_view' %}" class="mx-auto max-w-7xl px-4 py-4">
+                    {% csrf_token %}
+                    <input type="hidden" name="search_query" value="{{ request.POST.search_query }}">
+                    <nav class="flex space-x-4 justify-center" aria-label="Tabs">
+                        <button type="submit" name="active_tab" value="all_results" class="rounded-md px-3 py-2 text-sm font-medium border border-gray-300 {% if active_tab == 'all_results' %}bg-gray-100 text-gray-700{% else %}text-gray-500 hover:text-gray-700{% endif %}">All Result</button>
+                        <button type="submit" name="active_tab" value="artists" class="rounded-md px-3 py-2 text-sm font-medium border border-gray-300 {% if active_tab == 'artists' %}bg-gray-100 text-gray-700{% else %}text-gray-500 hover:text-gray-700{% endif %}">Artist</button>
+                        <button type="submit" name="active_tab" value="tracks" class="rounded-md px-3 py-2 text-sm font-medium border border-gray-300 {% if active_tab == 'tracks' %}bg-gray-100 text-gray-700{% else %}text-gray-500 hover:text-gray-700{% endif %}">Tracks</button>
+                        <button type="submit" name="active_tab" value="albums" class="rounded-md px-3 py-2 text-sm font-medium border border-gray-300 {% if active_tab == 'albums' %}bg-gray-100 text-gray-700{% else %}text-gray-500 hover:text-gray-700{% endif %}">Albums</button>
+                    </nav>
+                </form>
+            </div>
         </div>
-    </div>
 
+        <!-- Search Result Header -->
+        {% if artists or tracks or albums %}
+        <header class="bg-white shadow mt-4">
+            <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+                <h1 class="text-3xl font-bold tracking-tight text-gray-900">Search Result</h1>
+            </div>
+        </header>
+        {% endif %}
+
+        <!-- Search Results -->
+        <main>
+            <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+                <!-- Artists Results -->
+                {% if active_tab == 'all_results' or active_tab == 'artists' %}
+                    {% if artists %}
+                    <div class="mt-6">
+                        <h3 class="text-xl font-bold mb-2 text-blue-600">Artists Found:</h3>
+                        <ul class="flex flex-wrap gap-4 list-none">
+                            {% for artist in artists %}
+                                <li class="flex flex-col items-center mb-4 w-1/5 max-w-xs">
+                                    {% if artist.images and artist.images|length > 0 %}
+                                        <img src="{{ artist.images.0.url }}" alt="{{ artist.name }} avatar" class="w-14 h-14 object-cover rounded-full mb-2">
+                                    {% else %}
+                                        <span class="inline-block h-14 w-14 overflow-hidden rounded-full bg-gray-100 mb-2">
+                                            <svg class="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                                            </svg>
+                                        </span>
+                                    {% endif %}
+                                    <span class="text-center">{{ artist.name }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+
+                        <!-- Pagination for Artists -->
+                        <div class="flex items-center justify-center mt-6">
+                            <form method="post" action="{% url 'main_page_view' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="search_query" value="{{ request.POST.search_query }}">
+                                <input type="hidden" name="active_tab" value="artists">
+                                <nav class="flex gap-2" aria-label="Artist Pagination">
+                                    {% for page_num in artist_paginator.page_range %}
+                                        <button type="submit" name="artist_page" value="{{ page_num }}"
+                                                class="px-4 py-2 border rounded-md text-sm font-medium
+                                                {% if artists.number == page_num %}bg-gray-300{% else %}bg-white hover:bg-gray-100{% endif %}">
+                                            {{ page_num }}
+                                        </button>
+                                    {% endfor %}
+                                </nav>
+                            </form>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endif %}
+
+                <!-- Tracks Results -->
+                {% if active_tab == 'all_results' or active_tab == 'tracks' %}
+                    {% if tracks %}
+                    <div class="mt-6">
+                        <h3 class="text-xl font-bold mb-2 text-blue-600">Tracks Found:</h3>
+                        <ul class="flex flex-wrap gap-4 list-none">
+                            {% for track in tracks %}
+                                <li class="flex items-start mb-4 w-full border-b border-gray-300 pb-4">
+                                    {% if track.album.images %}
+                                        <img src="{{ track.album.images.0.url }}" alt="{{ track.name }} album cover" class="w-16 h-16 object-cover rounded-lg mr-4">
+                                    {% endif %}
+                                    <div>
+                                        <h4 class="text-lg font-semibold">{{ track.name }}</h4>
+                                        <p class="text-gray-600">Artist(s):
+                                            {% for artist in track.artists %}
+                                                {{ artist.name }}{% if not forloop.last %}, {% endif %}
+                                            {% endfor %}
+                                        </p>
+                                        <p class="text-gray-600">Album: {{ track.album.name }}</p>
+                                        <p class="text-gray-600">Duration: {{ track.formatted_duration }}</p>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+
+                        <!-- Pagination for Tracks -->
+                        <div class="flex items-center justify-center mt-6">
+                            <form method="post" action="{% url 'main_page_view' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="search_query" value="{{ request.POST.search_query }}">
+                                <input type="hidden" name="active_tab" value="tracks">
+                                <nav class="flex gap-2" aria-label="Track Pagination">
+                                    {% for page_num in track_paginator.page_range %}
+                                        <button type="submit" name="track_page" value="{{ page_num }}"
+                                                class="px-4 py-2 border rounded-md text-sm font-medium
+                                                {% if tracks.number == page_num %}bg-gray-300{% else %}bg-white hover:bg-gray-100{% endif %}">
+                                            {{ page_num }}
+                                        </button>
+                                    {% endfor %}
+                                </nav>
+                            </form>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endif %}
+
+                <!-- Albums Results -->
+                {% if active_tab == 'all_results' or active_tab == 'albums' %}
+                    {% if albums %}
+                    <div class="mt-6">
+                        <h3 class="text-xl font-bold mb-2 text-blue-600">Albums Found:</h3>
+                        <ul class="flex flex-wrap gap-4 list-none">
+                            {% for album in albums %}
+                                <li class="flex flex-col items-center mb-4 w-1/5">
+                                    {% if album.images %}
+                                        <img src="{{ album.images.0.url }}" alt="{{ album.name }} album cover" class="w-24 h-24 object-cover mb-2">
+                                    {% endif %}
+                                    <h4 class="text-lg font-semibold text-center">{{ album.name }}</h4>
+                                    <p class="text-gray-600 text-sm text-center">
+                                        Artist(s):
+                                        {% for artist in album.artists %}
+                                            {{ artist.name }}{% if not forloop.last %}, {% endif %}
+                                        {% endfor %}
+                                    </p>
+                                    <p class="text-gray-600 text-sm text-center">Released: {{ album.release_year }}</p>
+                                </li>
+                            {% endfor %}
+                        </ul>
+
+                        <!-- Pagination for Albums -->
+                        <div class="flex items-center justify-center mt-6">
+                            <form method="post" action="{% url 'main_page_view' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="search_query" value="{{ request.POST.search_query }}">
+                                <input type="hidden" name="active_tab" value="albums">
+                                <nav class="flex gap-2" aria-label="Album Pagination">
+                                    {% for page_num in album_paginator.page_range %}
+                                        <button type="submit" name="album_page" value="{{ page_num }}"
+                                                class="px-4 py-2 border rounded-md text-sm font-medium
+                                                {% if albums.number == page_num %}bg-gray-300{% else %}bg-white hover:bg-gray-100{% endif %}">
+                                            {{ page_num }}
+                                        </button>
+                                    {% endfor %}
+                                </nav>
+                            </form>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </main>
+    </div>
 </body>
 </html>

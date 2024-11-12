@@ -1,14 +1,16 @@
-
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    './templates/**/*.html',           // For global templates folder
-    './spotify_app/templates/**/*.html',  // If you have an app-specific folder
-    './**/*.html',                     // To ensure all HTML files are covered
-    './spotify_app/**/*.html',         // To cover HTML files inside the app folder
+    './templates/**/*.html',
+    './spotify_app/templates/**/*.html',
+    './**/*.html',
+    './spotify_app/**/*.html',
   ],
   theme: {
-    extend: {},
+    colors: {
+      'primary': "#ff77e9",
+      'custom-green': "#ccd5ae"  
+    },
   },
   plugins: [],
-}
+};
