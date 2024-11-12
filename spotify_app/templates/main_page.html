@@ -1,3 +1,6 @@
+
+
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -5,26 +8,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Main Page</title>
-    <!-- Link to Tailwind CSS (output.css) -->
-    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+    <link rel="stylesheet" href="{% static 'css/input.css' %}">
 </head>
-<body class="bg-customBackground text-gray-900">
+
+<body class="dark text-gray-900">
     <!-- Main Container -->
-    <div class="min-h-full">
+    <div class="dark min-h-full ">
         <!-- Navigation Bar -->
-        <nav class="bg-gray-800 w-full">
+        <nav class=" w-full border-gray-800" style="border-width: 2px;">
             <div class="w-full px-4 sm:px-6 lg:px-8">
                 <div class="flex h-16 items-center justify-between">
                     <div class="flex items-center flex-1 mr-5">
                         <div class="shrink-0">
-                            <div class="font-mono text-white">Group_MusicApp</div>
+                            <div class="font-mono text-black">Group_MusicApp</div>
                         </div>
                         <div class="hidden md:block flex-1">
                             <div class="ml-10 flex items-center justify-between w-full">
                                 <div class="flex space-x-4">
-                                    <a href="#" class="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white" aria-current="page">Dashboard</a>
-                                    <a href="#" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Recommendations</a>
-                                    <a href="#" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Top Charts</a>
+                                    <!-- Link the Dashboard tab to the 'dashboard' view -->
+                                    <a href="{% url 'dashboard' %}" class="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white" aria-current="page">Dashboard</a>
+                                    <a href="#" class="rounded-md px-3 py-2 text-sm font-medium  hover:bg-gray-700 hover:text-white">Recommendations</a>
+                                    <a href="#" class="rounded-md px-3 py-2 text-sm font-medium  hover:bg-gray-700 hover:text-white">Top Charts</a>
                                 </div>
                                 <!-- Search Form in Navigation -->
                                 <form method="post" action="{% url 'main_page_view' %}">
@@ -52,182 +56,90 @@
                 </div>
             </div>
         </nav>
+        
 
-        <!-- Tabs for Search Result -->
-        <div class="bg-white p-4 border-t">
-            <div class="sm:hidden">
-                <label for="tabs" class="sr-only">Select a tab</label>
-                <form method="post" action="{% url 'main_page_view' %}">
-                    {% csrf_token %}
-                    <select id="tabs" name="active_tab" class="block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500" onchange="this.form.submit()">
-                        <option value="all_results" {% if active_tab == 'all_results' %}selected{% endif %}>All Result</option>
-                        <option value="artists" {% if active_tab == 'artists' %}selected{% endif %}>Artist</option>
-                        <option value="tracks" {% if active_tab == 'tracks' %}selected{% endif %}>Tracks</option>
-                        <option value="albums" {% if active_tab == 'albums' %}selected{% endif %}>Albums</option>
-                    </select>
-                    <input type="hidden" name="search_query" value="{{ request.POST.search_query }}">
-                </form>
-            </div>
-            <div class="hidden sm:block">
-                <form method="post" action="{% url 'main_page_view' %}" class="mx-auto max-w-7xl px-4 py-4">
-                    {% csrf_token %}
-                    <input type="hidden" name="search_query" value="{{ request.POST.search_query }}">
-                    <nav class="flex space-x-4 justify-center" aria-label="Tabs">
-                        <button type="submit" name="active_tab" value="all_results" class="rounded-md px-3 py-2 text-sm font-medium border border-gray-300 {% if active_tab == 'all_results' %}bg-gray-100 text-gray-700{% else %}text-gray-500 hover:text-gray-700{% endif %}">All Result</button>
-                        <button type="submit" name="active_tab" value="artists" class="rounded-md px-3 py-2 text-sm font-medium border border-gray-300 {% if active_tab == 'artists' %}bg-gray-100 text-gray-700{% else %}text-gray-500 hover:text-gray-700{% endif %}">Artist</button>
-                        <button type="submit" name="active_tab" value="tracks" class="rounded-md px-3 py-2 text-sm font-medium border border-gray-300 {% if active_tab == 'tracks' %}bg-gray-100 text-gray-700{% else %}text-gray-500 hover:text-gray-700{% endif %}">Tracks</button>
-                        <button type="submit" name="active_tab" value="albums" class="rounded-md px-3 py-2 text-sm font-medium border border-gray-300 {% if active_tab == 'albums' %}bg-gray-100 text-gray-700{% else %}text-gray-500 hover:text-gray-700{% endif %}">Albums</button>
-                    </nav>
-                </form>
-            </div>
-        </div>
+        <!-- Default Landing Page Content -->
+        {% if default_landing %}
+        <div class=" py-24 sm:py-32">
+            <div class="mx-auto max-w-2xl px-6 lg:max-w-7xl lg:px-8">
+              <h2 class="text-base/7 font-semibold text-indigo-600">Hello, User Name (We may add another feature for asking user to register their own account,it will show their name)</h2>
+              <p class="mt-2 max-w-lg text-pretty text-4xl font-semibold tracking-tight text-gray-950 sm:text-5xl">Today, Your Music is...</p>
+              <div class="mt-10 grid grid-cols-1 gap-4 sm:mt-16 lg:grid-cols-6 lg:grid-rows-2">
+                <div class="relative lg:col-span-3">
+                  <div class="absolute inset-px rounded-lg bg-white max-lg:rounded-t-[2rem] lg:rounded-tl-[2rem]"></div>
+                  <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(theme(borderRadius.lg)+1px)] max-lg:rounded-t-[calc(2rem+1px)] lg:rounded-tl-[calc(2rem+1px)]">
+                    <video class="h-80 object-cover object-center"  autoplay muted loop>
+                        <source src="{% static 'videos/v1.mp4' %}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    
+                      
 
-        <!-- Search Result Header -->
-        {% if artists or tracks or albums %}
-        <header class="bg-white shadow mt-4">
-            <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                <h1 class="text-3xl font-bold tracking-tight text-gray-900">Search Result</h1>
+                    <div class="p-10 pt-4">
+                      <h3 class="text-sm/4 font-semibold text-indigo-600">Top Chart</h3>
+                      <p class="mt-2 text-lg font-medium tracking-tight text-gray-950">Top Chart</p>
+                      <p class="mt-2 max-w-lg text-sm/6 text-gray-600">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In gravida justo et nulla efficitur, maximus egestas sem pellentesque.</p>
+                    </div>
+                  </div>
+                  <div class="pointer-events-none absolute inset-px rounded-lg shadow ring-1 ring-black/5 max-lg:rounded-t-[2rem] lg:rounded-tl-[2rem]"></div>
+                </div>
+                <div class="relative lg:col-span-3">
+                  <div class="absolute inset-px rounded-lg bg-white lg:rounded-tr-[2rem]"></div>
+                  <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(theme(borderRadius.lg)+1px)] lg:rounded-tr-[calc(2rem+1px)]">
+                    <img class="h-80 object-cover object-left lg:object-right" src="{% static 'images/main_1.png' %}" alt="Main Image1">
+
+                    <div class="p-10 pt-4">
+                      <h3 class="text-sm/4 font-semibold text-indigo-600">Recommendations</h3>
+                      <p class="mt-2 text-lg font-medium tracking-tight text-gray-950">Recommendations</p>
+                      <p class="mt-2 max-w-lg text-sm/6 text-gray-600">Curabitur auctor, ex quis auctor venenatis, eros arcu rhoncus massa, laoreet dapibus ex elit vitae odio.</p>
+                    </div>
+                  </div>
+                  <div class="pointer-events-none absolute inset-px rounded-lg shadow ring-1 ring-black/5 lg:rounded-tr-[2rem]"></div>
+                </div>
+                <div class="relative lg:col-span-2">
+                  <div class="absolute inset-px rounded-lg bg-white lg:rounded-bl-[2rem]"></div>
+                  <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(theme(borderRadius.lg)+1px)] lg:rounded-bl-[calc(2rem+1px)]">
+                    <img class="h-80 object-cover object-left lg:object-right" src="{% static 'images/main_2.png' %}" alt="Main Image2">
+                    <div class="p-10 pt-4">
+                      <h3 class="text-sm/4 font-semibold text-indigo-600">Liked Music</h3>
+                      <p class="mt-2 text-lg font-medium tracking-tight text-gray-950">Liked Music</p>
+                      <p class="mt-2 max-w-lg text-sm/6 text-gray-600">Sed congue eros non finibus molestie. Vestibulum euismod augue.</p>
+                    </div>
+                  </div>
+                  <div class="pointer-events-none absolute inset-px rounded-lg shadow ring-1 ring-black/5 lg:rounded-bl-[2rem]"></div>
+                </div>
+                <div class="relative lg:col-span-2">
+                  <div class="absolute inset-px rounded-lg bg-white"></div>
+                  <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(theme(borderRadius.lg)+1px)]">
+                    <img class="h-80 object-cover object-left lg:object-right" src="{% static 'images/main_3.jpg' %}" alt="Main Image3">
+                    <div class="p-10 pt-4">
+                      <h3 class="text-sm/4 font-semibold text-indigo-600">Access Your List</h3>
+                      <p class="mt-2 text-lg font-medium tracking-tight text-gray-950">Access Your List</p>
+                      <p class="mt-2 max-w-lg text-sm/6 text-gray-600">Maecenas at augue sed elit dictum vulputate, in nisi aliquam maximus arcu.</p>
+                    </div>
+                  </div>
+                  <div class="pointer-events-none absolute inset-px rounded-lg shadow ring-1 ring-black/5"></div>
+                </div>
+                <div class="relative lg:col-span-2">
+                  <div class="absolute inset-px rounded-lg bg-white max-lg:rounded-b-[2rem] lg:rounded-br-[2rem]"></div>
+                  <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(theme(borderRadius.lg)+1px)] max-lg:rounded-b-[calc(2rem+1px)] lg:rounded-br-[calc(2rem+1px)]">
+                    <img class="h-80 object-cover object-left lg:object-right" src="{% static 'images/main_4.png' %}" alt="Main Image4">
+                    <div class="p-10 pt-4">
+                      <h3 class="text-sm/4 font-semibold text-indigo-600">Picked For You</h3>
+                      <p class="mt-2 text-lg font-medium tracking-tight text-gray-950">Picked For You</p>
+                      <p class="mt-2 max-w-lg text-sm/6 text-gray-600">Aenean vulputate justo commodo auctor vehicula in malesuada semper.</p>
+                    </div>
+                  </div>
+                  <div class="pointer-events-none absolute inset-px rounded-lg shadow ring-1 ring-black/5 max-lg:rounded-b-[2rem] lg:rounded-br-[2rem]"></div>
+                </div>
+              </div>
             </div>
-        </header>
+          </div>
+          
         {% endif %}
 
-        <!-- Search Results -->
-        <main>
-            <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                <!-- Artists Results -->
-                {% if active_tab == 'all_results' or active_tab == 'artists' %}
-                    {% if artists %}
-                    <div class="mt-6">
-                        <h3 class="text-xl font-bold mb-2 text-blue-600">Artists Found:</h3>
-                        <ul class="flex flex-wrap gap-4 list-none">
-                            {% for artist in artists %}
-                                <li class="flex flex-col items-center mb-4 w-1/5 max-w-xs">
-                                    {% if artist.images and artist.images|length > 0 %}
-                                        <img src="{{ artist.images.0.url }}" alt="{{ artist.name }} avatar" class="w-14 h-14 object-cover rounded-full mb-2">
-                                    {% else %}
-                                        <span class="inline-block h-14 w-14 overflow-hidden rounded-full bg-gray-100 mb-2">
-                                            <svg class="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
-                                            </svg>
-                                        </span>
-                                    {% endif %}
-                                    <span class="text-center">{{ artist.name }}</span>
-                                </li>
-                            {% endfor %}
-                        </ul>
-
-                        <!-- Pagination for Artists -->
-                        <div class="flex items-center justify-center mt-6">
-                            <form method="post" action="{% url 'main_page_view' %}">
-                                {% csrf_token %}
-                                <input type="hidden" name="search_query" value="{{ request.POST.search_query }}">
-                                <input type="hidden" name="active_tab" value="artists">
-                                <nav class="flex gap-2" aria-label="Artist Pagination">
-                                    {% for page_num in artist_paginator.page_range %}
-                                        <button type="submit" name="artist_page" value="{{ page_num }}"
-                                                class="px-4 py-2 border rounded-md text-sm font-medium
-                                                {% if artists.number == page_num %}bg-gray-300{% else %}bg-white hover:bg-gray-100{% endif %}">
-                                            {{ page_num }}
-                                        </button>
-                                    {% endfor %}
-                                </nav>
-                            </form>
-                        </div>
-                    </div>
-                    {% endif %}
-                {% endif %}
-
-                <!-- Tracks Results -->
-                {% if active_tab == 'all_results' or active_tab == 'tracks' %}
-                    {% if tracks %}
-                    <div class="mt-6">
-                        <h3 class="text-xl font-bold mb-2 text-blue-600">Tracks Found:</h3>
-                        <ul class="flex flex-wrap gap-4 list-none">
-                            {% for track in tracks %}
-                                <li class="flex items-start mb-4 w-full border-b border-gray-300 pb-4">
-                                    {% if track.album.images %}
-                                        <img src="{{ track.album.images.0.url }}" alt="{{ track.name }} album cover" class="w-16 h-16 object-cover rounded-lg mr-4">
-                                    {% endif %}
-                                    <div>
-                                        <h4 class="text-lg font-semibold">{{ track.name }}</h4>
-                                        <p class="text-gray-600">Artist(s):
-                                            {% for artist in track.artists %}
-                                                {{ artist.name }}{% if not forloop.last %}, {% endif %}
-                                            {% endfor %}
-                                        </p>
-                                        <p class="text-gray-600">Album: {{ track.album.name }}</p>
-                                        <p class="text-gray-600">Duration: {{ track.formatted_duration }}</p>
-                                    </div>
-                                </li>
-                            {% endfor %}
-                        </ul>
-
-                        <!-- Pagination for Tracks -->
-                        <div class="flex items-center justify-center mt-6">
-                            <form method="post" action="{% url 'main_page_view' %}">
-                                {% csrf_token %}
-                                <input type="hidden" name="search_query" value="{{ request.POST.search_query }}">
-                                <input type="hidden" name="active_tab" value="tracks">
-                                <nav class="flex gap-2" aria-label="Track Pagination">
-                                    {% for page_num in track_paginator.page_range %}
-                                        <button type="submit" name="track_page" value="{{ page_num }}"
-                                                class="px-4 py-2 border rounded-md text-sm font-medium
-                                                {% if tracks.number == page_num %}bg-gray-300{% else %}bg-white hover:bg-gray-100{% endif %}">
-                                            {{ page_num }}
-                                        </button>
-                                    {% endfor %}
-                                </nav>
-                            </form>
-                        </div>
-                    </div>
-                    {% endif %}
-                {% endif %}
-
-                <!-- Albums Results -->
-                {% if active_tab == 'all_results' or active_tab == 'albums' %}
-                    {% if albums %}
-                    <div class="mt-6">
-                        <h3 class="text-xl font-bold mb-2 text-blue-600">Albums Found:</h3>
-                        <ul class="flex flex-wrap gap-4 list-none">
-                            {% for album in albums %}
-                                <li class="flex flex-col items-center mb-4 w-1/5">
-                                    {% if album.images %}
-                                        <img src="{{ album.images.0.url }}" alt="{{ album.name }} album cover" class="w-24 h-24 object-cover mb-2">
-                                    {% endif %}
-                                    <h4 class="text-lg font-semibold text-center">{{ album.name }}</h4>
-                                    <p class="text-gray-600 text-sm text-center">
-                                        Artist(s):
-                                        {% for artist in album.artists %}
-                                            {{ artist.name }}{% if not forloop.last %}, {% endif %}
-                                        {% endfor %}
-                                    </p>
-                                    <p class="text-gray-600 text-sm text-center">Released: {{ album.release_year }}</p>
-                                </li>
-                            {% endfor %}
-                        </ul>
-
-                        <!-- Pagination for Albums -->
-                        <div class="flex items-center justify-center mt-6">
-                            <form method="post" action="{% url 'main_page_view' %}">
-                                {% csrf_token %}
-                                <input type="hidden" name="search_query" value="{{ request.POST.search_query }}">
-                                <input type="hidden" name="active_tab" value="albums">
-                                <nav class="flex gap-2" aria-label="Album Pagination">
-                                    {% for page_num in album_paginator.page_range %}
-                                        <button type="submit" name="album_page" value="{{ page_num }}"
-                                                class="px-4 py-2 border rounded-md text-sm font-medium
-                                                {% if albums.number == page_num %}bg-gray-300{% else %}bg-white hover:bg-gray-100{% endif %}">
-                                            {{ page_num }}
-                                        </button>
-                                    {% endfor %}
-                                </nav>
-                            </form>
-                        </div>
-                    </div>
-                    {% endif %}
-                {% endif %}
-            </div>
-        </main>
+        <!-- Include the Search Results Template -->
+        {% include 'search.html' %}
     </div>
 </body>
 </html>

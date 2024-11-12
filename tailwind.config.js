@@ -1,3 +1,4 @@
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -6,10 +7,13 @@ module.exports = {
     './**/*.html',
     './spotify_app/**/*.html',
   ],
+  darkMode: 'class',
   theme: {
-    colors: {
-      'primary': "#ff77e9",
-      'custom-green': "#ccd5ae"  
+    extend: {
+      colors: {
+        primary: "#ff77e9",
+        customGreen: "#ccd5ae",
+      },
     },
   },
   plugins: [],
