@@ -16,6 +16,9 @@ def search():
             json_result = response.json()["artists"]["items"]
             if len(json_result) == 0:
                 return []
+            for artist in json_result:
+                artist['genres'] = artist.get('genres',[])
+
             return json_result
         else:
             return {"error": response.status_code, "message":response.reason}
@@ -33,6 +36,8 @@ def search():
                 duration_ms = track['duration_ms']
                 minutes, seconds = divmod(duration_ms // 1000, 60)
                 track['formatted_duration'] = f"{minutes}:{seconds:02d}"
+                # Add popularity to each track
+                track['popularity'] = track.get('popularity', 0) 
             return json_result
         else:
             return {"error": response.status_code, "message": response.reason}

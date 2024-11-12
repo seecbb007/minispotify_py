@@ -78,6 +78,16 @@
                     </span>
                   {% endif %}
                   <span class="text-center">{{ artist.name }}</span>
+                  <p class="text-gray-600 text-sm text-center">Genres: 
+                    {% if artist.genres %}
+                        {% for genre in artist.genres %}
+                            {{ genre }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        None
+                    {% endif %}
+                </p>
+                
                 </li>
               {% endfor %}
             </ul>
@@ -109,7 +119,7 @@
         <!-- Tracks Results -->
         {% if active_tab == 'all_results' or active_tab == 'tracks' %}
             {% if tracks %}
-            <div class="mt-6 border border-gray-500">
+            <div class="mt-6 border border-gray-500 p-4">
                 <h3 class="text-xl font-bold mb-2 ">Tracks Found:</h3>
                 <ul class="flex flex-wrap gap-4 list-none">
                     {% for track in tracks %}
@@ -126,6 +136,7 @@
                                 </p>
                                 <p class="text-gray-600">Album: {{ track.album.name }}</p>
                                 <p class="text-gray-600">Duration: {{ track.formatted_duration }}</p>
+                                <p class="text-gray-600">Popularity: {{ track.popularity }}/100</p> <!-- Display the popularity here -->
                             </div>
                         </li>
                     {% endfor %}
