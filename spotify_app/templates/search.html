@@ -1,4 +1,4 @@
-{% if artists or tracks or albums %}
+ {% if artists or tracks or albums %}
   <div class="bg-white shadow mt-4">
     <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <!-- Search Result Header -->
@@ -57,32 +57,32 @@
 
 
 <!-- Search Results -->
-<main>
-    <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+<main >
+    <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 ">
         <!-- Artists Results -->
+        
         {% if active_tab == 'all_results' or active_tab == 'artists' %}
-            {% if artists %}
-            <div class="mt-6">
-                <h3 class="text-xl font-bold mb-2 ">Artists Found:</h3>
-                <ul class="flex flex-wrap gap-4 list-none">
-                    {% for artist in artists %}
-                        <li class="flex flex-col items-center mb-4 w-1/5 max-w-xs">
-                            {% if artist.images and artist.images|length > 0 %}
-                                <img src="{{ artist.images.0.url }}" alt="{{ artist.name }} avatar" class="w-14 h-14 object-cover rounded-full mb-2">
-                            {% else %}
-                                <span class="inline-block h-14 w-14 overflow-hidden rounded-full bg-gray-100 mb-2">
-                                    <svg class="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
-                                    </svg>
-                                </span>
-                            {% endif %}
-                            <span class="text-center">{{ artist.name }}</span>
-                        </li>
-                    {% endfor %}
-                </ul>
-
-                <!-- Pagination for Artists -->
-                {% if artists.has_other_pages %}
+        {% if artists %}
+          <div class="mt-6 border border-gray-500 p-4 rounded-md">
+            <h3 class="text-xl font-bold mb-2">Artists Found:</h3>
+            <ul class="flex  flex-wrap gap-6 list-none justify-between">
+              {% for artist in artists %}
+                <li class="flex flex-col items-center mb-4 w-1/6 max-w-xs">
+                  {% if artist.images and artist.images|length > 0 %}
+                    <img src="{{ artist.images.0.url }}" alt="{{ artist.name }} avatar" class="w-14 h-14 object-cover rounded-full mb-2">
+                  {% else %}
+                    <span class="inline-block h-14 w-14 overflow-hidden rounded-full bg-gray-100 mb-2">
+                      <svg class="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                      </svg>
+                    </span>
+                  {% endif %}
+                  <span class="text-center">{{ artist.name }}</span>
+                </li>
+              {% endfor %}
+            </ul>
+            <!-- Pagination for Artists -->
+            {% if artists.has_other_pages %}
                 <div class="flex items-center justify-center mt-6">
                     <form method="post" action="{% url 'main_page_view' %}">
                         {% csrf_token %}
@@ -100,14 +100,16 @@
                     </form>
                 </div>
                 {% endif %}
-            </div>
-            {% endif %}
+          </div>
+
         {% endif %}
+      {% endif %}
+
 
         <!-- Tracks Results -->
         {% if active_tab == 'all_results' or active_tab == 'tracks' %}
             {% if tracks %}
-            <div class="mt-6">
+            <div class="mt-6 border border-gray-500">
                 <h3 class="text-xl font-bold mb-2 ">Tracks Found:</h3>
                 <ul class="flex flex-wrap gap-4 list-none">
                     {% for track in tracks %}
@@ -153,11 +155,11 @@
         <!-- Albums Results -->
         {% if active_tab == 'all_results' or active_tab == 'albums' %}
             {% if albums %}
-            <div class="mt-6">
+            <div class="mt-6 border border-gray-500">
                 <h3 class="text-xl font-bold mb-2 ">Albums Found:</h3>
-                <ul class="flex flex-wrap gap-4 list-none">
+                <ul class="flex flex-wrap gap-6 list-none justify-between">
                     {% for album in albums %}
-                        <li class="flex flex-col items-center mb-4 w-1/5">
+                        <li class="flex flex-col items-center mb-4 w-1/6">
                             {% if album.images %}
                                 <img src="{{ album.images.0.url }}" alt="{{ album.name }} album cover" class="w-24 h-24 object-cover mb-2">
                             {% endif %}
@@ -175,25 +177,26 @@
 
                 <!-- Pagination for Albums -->
                 {% if albums.has_other_pages %}
-<div class="flex items-center justify-center mt-6">
-    <form method="post" action="{% url 'main_page_view' %}">
-        {% csrf_token %}
-        <input type="hidden" name="search_query" value="{{ request.POST.search_query }}">
-        <input type="hidden" name="active_tab" value="albums">
-        <nav class="flex gap-2" aria-label="Albums Pagination">
-            {% for page_num in album_paginator.page_range %}
-                <button type="submit" name="album_page" value="{{ page_num }}"
-                        class="px-4 py-2 border rounded-md text-sm font-medium
-                        {% if albums.number == page_num %}bg-gray-300{% else %}bg-white hover:bg-gray-100{% endif %}">
-                    {{ page_num }}
-                </button>
-            {% endfor %}
-        </nav>
-    </form>
-</div>
+        <div class="flex items-center justify-center mt-6">
+            <form method="post" action="{% url 'main_page_view' %}">
+                {% csrf_token %}
+                <input type="hidden" name="search_query" value="{{ request.POST.search_query }}">
+                <input type="hidden" name="active_tab" value="albums">
+                <nav class="flex gap-2" aria-label="Albums Pagination">
+                    {% for page_num in album_paginator.page_range %}
+                        <button type="submit" name="album_page" value="{{ page_num }}"
+                                class="px-4 py-2 border rounded-md text-sm font-medium
+                                {% if albums.number == page_num %}bg-gray-300{% else %}bg-white hover:bg-gray-100{% endif %}">
+                            {{ page_num }}
+                        </button>
+                    {% endfor %}
+                </nav>
+            </form>
+    </div>
 {% endif %}
             </div>
             {% endif %}
         {% endif %}
     </div>
-</main>
+</main> 
+
