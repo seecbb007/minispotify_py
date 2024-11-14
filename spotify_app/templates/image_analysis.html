@@ -1,0 +1,59 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Analysis Result</title>
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+</head>
+<body class="dark text-gray-900">
+
+    <div class="mt-6">
+        <h3 class="text-2xl font-bold">Image Analysis Result</h3>
+        <div class="mt-4">
+            <h4 class="text-lg font-semibold">Uploaded Image</h4>
+            {% if image_url %}
+                <img src="{{ image_url }}" alt="Uploaded Image" class="rounded-lg border p-2">
+            {% else %}
+                <p>No image uploaded.</p>
+            {% endif %}
+        </div>
+    <div id="error-message" style="display: none; color: red;">Please upload a valid PNG file.</div>
+        <div class="mt-4">
+            <h4 class="text-lg font-semibold">Analysis Details11:</h4>
+            <ul>
+                <li><strong>Artist:</strong> {{ analysis_result.artist }}</li>
+                <li><strong>Album:</strong> {{ analysis_result.album }}</li>
+                
+            </ul>
+        </div>
+    
+        {% if artists %}
+            <div class="mt-4 border border-blue-500 p-4 rounded-md">
+                <h4 class="text-lg font-bold">Artists Found:</h4>
+                <ul class="flex flex-wrap gap-4 list-none">
+                    {% for artist in artists %}
+                        <li class="flex flex-col items-center mb-4 w-1/5 max-w-xs">
+                            {% if artist.images and artist.images|length > 0 %}
+                                <img src="{{ artist.images.0.url }}" alt="{{ artist.name }} avatar" class="w-14 h-14 object-cover rounded-full mb-2">
+                            {% else %}
+                                <span class="inline-block h-14 w-14 overflow-hidden rounded-full bg-gray-100 mb-2">
+                                    <svg class="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                                    </svg>
+                                </span>
+                            {% endif %}
+                            <span class="text-center">{{ artist.name }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% else %}
+            <p>No artists found from Spotify API.</p>
+        {% endif %}
+    </div>
+    
+</body>
+</html>
