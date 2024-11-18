@@ -1,3 +1,5 @@
+
+ 
  {% if artists or tracks or albums %}
   <div class="bg-white shadow mt-4">
     <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
@@ -137,7 +139,15 @@
                                 <p class="text-gray-600">Album: {{ track.album.name }}</p>
                                 <p class="text-gray-600">Duration: {{ track.formatted_duration }}</p>
                                 <p class="text-gray-600">Popularity: {{ track.popularity }}/100</p> <!-- Display the popularity here -->
-                            </div>
+                                {% if track.preview_url %}
+                                <audio controls class="mt-2">
+                                    <source src="{{ track.preview_url }}" type="audio/mpeg">
+                                    Your browser does not support the audio element.
+                                </audio>
+                                {% else %}
+                                <p class="text-gray-500 text-sm mt-2">Preview not available</p>
+                                {% endif %}
+                              </div>
                         </li>
                     {% endfor %}
                 </ul>
