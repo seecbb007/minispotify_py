@@ -1,0 +1,130 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nav</title>
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+    <script src="{% static 'js/validation_fileButt.js' %}" defer></script>
+
+</head>
+ <!-- Navigation Bar -->
+ <nav class="w-full border-b-2 border-gray-800 bg-white">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+      <!-- Logo -->
+      <div class="shrink-0 text-xl font-mono text-black">
+        Group_MusicApp
+      </div>
+  
+      <!-- Hamburger Menu for Small Screens -->
+      <div class="md:hidden">
+        <button id="menu-toggle" class="text-gray-800 focus:outline-none">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+  
+      <!-- Navigation Links and Forms -->
+      <div id="nav-links" class="hidden md:flex space-x-4 items-center">
+        <!-- Navigation Links -->
+        <div class="flex space-x-4 items-center flex-nowrap">
+          <a href="{% url 'dashboard' %}" class="px-2 md:px-3 py-2 text-xs md:text-sm font-medium text-white bg-gray-900 rounded-md">Dashboard</a>
+          <a href="#" class="px-2 md:px-3 py-2 text-xs md:text-sm font-medium text-gray-700 rounded-md hover:bg-gray-700 hover:text-white">Recommendations</a>
+          <a href="#" class="px-2 md:px-3 py-2 text-xs md:text-sm font-medium text-gray-700 rounded-md hover:bg-gray-700 hover:text-white">Top Charts</a>
+        </div>
+        
+  
+        <!-- Search Form -->
+        <form method="post" action="{% url 'main_page_view' %}" class="flex items-center gap-2 ml-4">
+          {% csrf_token %}
+          <input 
+            type="text" 
+            name="search_query" 
+            id="search_query" 
+            class="h-10 px-4 border border-gray-300 rounded-md w-72 focus:ring-blue-500 focus:border-blue-500" 
+            placeholder="Enter Artist/Tracks/Albums" 
+            required
+          >
+          <button 
+            type="submit" 
+            class="h-10 px-5 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:outline-none dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
+          >
+            Search
+          </button>
+        </form>
+  
+        <!-- Upload Form and Analyze Button -->
+        <form method="post" action="{% url 'analyze_image' %}" enctype="multipart/form-data" id="image-upload-form" class="flex items-center ml-4">
+          {% csrf_token %}
+          <div class="flex items-center gap-4 w-full p-4 rounded-lg dark:border-neutral-700 relative">
+            <div data-hs-file-upload='{"url": "/upload", "acceptedFiles": "image/*", "maxFiles": 1, "singleton": true}'>
+              <div class="flex items-center gap-3">
+                <div class="group" data-hs-file-upload-previews="" data-hs-file-upload-pseudo-trigger="">
+                  <span class="group-has-[div]:hidden flex justify-center items-center w-12 h-12 border-2 border-dotted border-gray-300 text-gray-400 cursor-pointer rounded-full hover:bg-gray-50 dark:border-neutral-700 dark:text-neutral-600 dark:hover:bg-neutral-700/50">
+                    <img id="image-preview" src="" alt="Preview" class="w-full h-full object-cover rounded-full hidden">
+                    <svg id="upload-icon" class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <circle cx="12" cy="10" r="3"></circle>
+                      <path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662"></path>
+                    </svg>
+                  </span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <input type="file" name="image_file" id="image_file" accept=".png" class="hidden" onchange="previewImage(event)" />
+                  <button type="button" class="py-2 px-3 text-xs font-medium rounded-lg border border-gray-200  text-gray-800  hover:bg-gray-200 focus:outline-none focus:bg-gray-400 disabled:opacity-50 disabled:pointer-events-none" onclick="document.getElementById('image_file').click();">
+                    Upload
+                  </button>
+                  <button type="button" class="py-2 px-3 text-xs font-semibold rounded-lg border border-gray-200 bg-white text-gray-500 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800" onclick="clearFileInput()">
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="ml-auto">
+              <button type="submit" class="py-2 px-3 text-xs font-semibold rounded-lg border border-gray-200  text-gray-800  hover:bg-gray-200 shadow-sm  focus:outline-none">
+                Analyze
+              </button>
+            </div>
+            <p id="error-message" class="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 text-red-500 text-xs bg-white border border-red-500 rounded px-3 py-1 shadow-md hidden">
+              No file was uploaded
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
+  
+    <!-- Mobile Menu for Small Screens -->
+    <div id="mobile-menu" class="md:hidden hidden px-4 pt-2 pb-4 border-t border-gray-300 bg-white space-y-4">
+      <!-- Mobile Navigation Links -->
+      <a href="{% url 'dashboard' %}" class="block px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-700 hover:text-white">Dashboard</a>
+      <a href="#" class="block px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-700 hover:text-white">Recommendations</a>
+      <a href="#" class="block px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-700 hover:text-white">Top Charts</a>
+  
+      <!-- Mobile Search Form -->
+      <form method="post" action="{% url 'main_page_view' %}" class="flex flex-col gap-2">
+        {% csrf_token %}
+        <input type="text" name="search_query" id="search_query_mobile" class="h-10 px-4 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="Enter Artist/Tracks/Albums" required>
+        <button type="submit" class="h-10 px-5 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:outline-none dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
+          Search
+        </button>
+      </form>
+  
+      <!-- Mobile Upload Form and Analyze Button -->
+      <form method="post" action="{% url 'analyze_image' %}" enctype="multipart/form-data" id="image-upload-form-mobile" class="flex flex-col gap-2 mt-4">
+        {% csrf_token %}
+        <input type="file" name="image_file_mobile" id="image_file_mobile" accept=".png" class="hidden" onchange="previewImage(event)">
+        <button type="button" class="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-blue-600 text-white hover:bg-blue-700" onclick="document.getElementById('image_file_mobile').click();">Upload</button>
+        <button type="submit" class="py-2 px-3 text-sm font-semibold rounded-lg bg-blue-600 text-white shadow-sm hover:bg-blue-700">Analyze</button>
+      </form>
+    </div>
+  </nav>
+  
+  <script>
+    // JavaScript to toggle mobile menu visibility
+    document.getElementById('menu-toggle').addEventListener('click', function () {
+      const mobileMenu = document.getElementById('mobile-menu');
+      mobileMenu.classList.toggle('hidden');
+    });
+  </script>
