@@ -1,4 +1,14 @@
+<<<<<<< HEAD
 {% comment %} 
+=======
+
+ 
+ {% if artists or tracks or albums %}
+  <div class="bg-white shadow mt-4">
+    <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <!-- Search Result Header -->
+      <h1 class="text-3xl font-bold tracking-tight text-gray-900">Search Result</h1>
+>>>>>>> 3cda4c50920b1d94266aecba247474fd42b4d1ed
 
 
 {% load static %}
@@ -169,10 +179,45 @@
                                             {{ page_num }}
                                         </button>
                                     {% endfor %}
+<<<<<<< HEAD
                                 </nav>
                             </form>
                         </div>
                     {% endif %}
+=======
+                                </p>
+                                <p class="text-gray-600">Album: {{ track.album.name }}</p>
+                                <p class="text-gray-600">Duration: {{ track.formatted_duration }}</p>
+                                <p class="text-gray-600">Popularity: {{ track.popularity }}/100</p> <!-- Display the popularity here -->
+                                {% if track.preview_url %}
+                                <audio controls class="mt-2">
+                                    <source src="{{ track.preview_url }}" type="audio/mpeg">
+                                    Your browser does not support the audio element.
+                                </audio>
+                                {% else %}
+                                <p class="text-gray-500 text-sm mt-2">Preview not available</p>
+                                {% endif %}
+                              </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+                {% if tracks.has_other_pages %}
+                <div class="flex items-center justify-center mt-6">
+                    <form method="post" action="{% url 'main_page_view' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="search_query" value="{{ request.POST.search_query }}">
+                        <input type="hidden" name="active_tab" value="tracks">
+                        <nav class="flex gap-2" aria-label="Tracks Pagination">
+                            {% for page_num in track_paginator.page_range %}
+                                <button type="submit" name="track_page" value="{{ page_num }}"
+                                        class="px-4 py-2 border rounded-md text-sm font-medium
+                                        {% if tracks.number == page_num %}bg-gray-300{% else %}bg-white hover:bg-gray-100{% endif %}">
+                                    {{ page_num }}
+                                </button>
+                            {% endfor %}
+                        </nav>
+                    </form>
+>>>>>>> 3cda4c50920b1d94266aecba247474fd42b4d1ed
                 </div>
             {% endif %}
         {% endif %}
