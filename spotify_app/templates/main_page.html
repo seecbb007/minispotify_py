@@ -1,120 +1,110 @@
+
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="{{ csrf_token }}">  <!-- Add this line -->
-  <title>Main Page</title>
-  <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
-  <link rel="stylesheet" href="{% static 'css/output.css' %}">
-  <script src="{% static 'js/validation_fileButt.js' %}" defer></script>
-</head>
-<body class="dark text-gray-900">
+{% block title %}Home - Group Music App{% endblock %}
+
+{% block content %}
     <!-- Main Container -->
-    <div class="dark min-h-full ">
-      {% include 'navbar.html' %}
-        
+    <div class="dark min-h-full">
+        {% if not access_token %}
+            <div class="flex justify-center py-4">
+                <a href="{% url 'authorize' %}" class="inline-flex items-center px-6 py-3 text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
+                    <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+                    </svg>
+                    Login with Spotify
+                </a>
+            </div>
+        {% endif %}
 
-      {% if not access_token %}
-<div class="flex justify-center py-4">
-    <a href="{% url 'authorize' %}" class="inline-flex items-center px-6 py-3 text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
-        <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
-            <!-- Spotify icon -->
-            <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
-        </svg>
-        Login with Spotify
-    </a>
-</div>
-{% endif %}
         <!-- Default Landing Page Content -->
         {% if default_landing %}
-        <div class=" py-24 sm:py-32">
-            <div class="mx-auto max-w-2xl px-6 lg:max-w-7xl lg:px-8">
-              <h2 class="text-base/7 font-semibold text-indigo-600">Hello, User Name </h2>
-              <p class="mt-2 max-w-lg text-pretty text-4xl font-semibold tracking-tight text-gray-950 sm:text-5xl">Today, Your Music is...</p>
-              <div class="mt-10 grid grid-cols-1 gap-4 sm:mt-16 lg:grid-cols-6 lg:grid-rows-2">
-                <div class="relative lg:col-span-3">
-                  <div class="absolute inset-px rounded-lg bg-white max-lg:rounded-t-[2rem] lg:rounded-tl-[2rem]"></div>
-                  <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(theme(borderRadius.lg)+1px)] max-lg:rounded-t-[calc(2rem+1px)] lg:rounded-tl-[calc(2rem+1px)]">
-                    <video class="h-80 object-cover object-center"  autoplay muted loop>
-                        <source src="{% static 'videos/v1.mp4' %}" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                    
-                      
+            <div class="py-24 sm:py-26">
+                <div class="mx-auto max-w-2xl px-6 lg:max-w-7xl lg:px-8">
+                    <h2 class="text-3xl font-semibold text-indigo-600">
+                        Hello, {% if request.session.username %}{{ request.session.username }}{% else %}User Name{% endif %}
+                    </h2>
+                    <p class="mt-2 max-w-lg text-pretty text-xl font-semibold tracking-tight text-gray-950 sm:text-5xl">Today, Your Music is...</p>
+                    <div class="mt-10 grid grid-cols-1 gap-4 sm:mt-16 lg:grid-cols-6 lg:grid-rows-2">
+                        <!-- Top Chart Section -->
+                        <div class="relative lg:col-span-3">
+                            <div class="absolute inset-px rounded-lg bg-white max-lg:rounded-t-[2rem] lg:rounded-tl-[2rem]"></div>
+                            <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(theme(borderRadius.lg)+1px)] max-lg:rounded-t-[calc(2rem+1px)] lg:rounded-tl-[calc(2rem+1px)]">
+                                <video class="h-80 object-cover object-center" autoplay muted loop>
+                                    <source src="{% static 'videos/v1.mp4' %}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                                <div class="p-10 pt-4">
+                                    <h3 class="text-sm/4 font-semibold text-indigo-600">Top Chart</h3>
+                                    <p class="mt-2 text-lg font-medium tracking-tight text-gray-950">Top Chart</p>
+                                    <p class="mt-2 max-w-lg text-sm/6 text-gray-600">Top Chart Content</p>
+                                </div>
+                            </div>
+                            <div class="pointer-events-none absolute inset-px rounded-lg shadow ring-1 ring-black/5 max-lg:rounded-t-[2rem] lg:rounded-tl-[2rem]"></div>
+                        </div>
 
-                    <div class="p-10 pt-4">
-                      <h3 class="text-sm/4 font-semibold text-indigo-600">Top Chart</h3>
-                      <p class="mt-2 text-lg font-medium tracking-tight text-gray-950">Top Chart</p>
-                      <p class="mt-2 max-w-lg text-sm/6 text-gray-600">Top Chart Content</p>
-                    </div>
-                  </div>
-                  <div class="pointer-events-none absolute inset-px rounded-lg shadow ring-1 ring-black/5 max-lg:rounded-t-[2rem] lg:rounded-tl-[2rem]"></div>
-                </div>
-                <div class="relative lg:col-span-3">
-                  <div class="absolute inset-px rounded-lg bg-white lg:rounded-tr-[2rem]"></div>
-                  <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(theme(borderRadius.lg)+1px)] lg:rounded-tr-[calc(2rem+1px)]">
-                    <img class="h-80 object-cover object-left lg:object-right" src="{% static 'images/main_1.png' %}" alt="Main Image1">
+                        <!-- Recommendations Section -->
+                        <div class="relative lg:col-span-3">
+                            <div class="absolute inset-px rounded-lg bg-white lg:rounded-tr-[2rem]"></div>
+                            <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(theme(borderRadius.lg)+1px)] lg:rounded-tr-[calc(2rem+1px)]">
+                                <img class="h-80 object-cover object-left lg:object-right" src="{% static 'images/main_1.png' %}" alt="Main Image1">
+                                <div class="p-10 pt-4">
+                                    <h3 class="text-sm/4 font-semibold text-indigo-600">Recommendations</h3>
+                                    <p class="mt-2 text-lg font-medium tracking-tight text-gray-950">Recommendations</p>
+                                    <p class="mt-2 max-w-lg text-sm/6 text-gray-600">Recommendations Content</p>
+                                </div>
+                            </div>
+                            <div class="pointer-events-none absolute inset-px rounded-lg shadow ring-1 ring-black/5 lg:rounded-tr-[2rem]"></div>
+                        </div>
 
-                    <div class="p-10 pt-4">
-                      <h3 class="text-sm/4 font-semibold text-indigo-600">Recommendations</h3>
-                      <p class="mt-2 text-lg font-medium tracking-tight text-gray-950">Recommendations</p>
-                      <p class="mt-2 max-w-lg text-sm/6 text-gray-600">Recommendations Content</p>
+                        <!-- Liked Music Section -->
+                        <div class="relative lg:col-span-2">
+                            <div class="absolute inset-px rounded-lg bg-white lg:rounded-bl-[2rem]"></div>
+                            <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(theme(borderRadius.lg)+1px)] lg:rounded-bl-[calc(2rem+1px)]">
+                                <img class="h-80 object-cover object-left lg:object-right" src="{% static 'images/main_2.png' %}" alt="Main Image2">
+                                <div class="p-10 pt-4">
+                                    <h3 class="text-sm/4 font-semibold text-indigo-600">Liked Music</h3>
+                                    <p class="mt-2 text-lg font-medium tracking-tight text-gray-950">Liked Music</p>
+                                    <p class="mt-2 max-w-lg text-sm/6 text-gray-600">Liked Music Content</p>
+                                </div>
+                            </div>
+                            <div class="pointer-events-none absolute inset-px rounded-lg shadow ring-1 ring-black/5 lg:rounded-bl-[2rem]"></div>
+                        </div>
+
+                        <!-- Access Your List Section -->
+                        <div class="relative lg:col-span-2">
+                            <div class="absolute inset-px rounded-lg bg-white"></div>
+                            <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(theme(borderRadius.lg)+1px)]">
+                                <img class="h-80 object-cover object-left lg:object-right" src="{% static 'images/main_3.jpg' %}" alt="Main Image3">
+                                <div class="p-10 pt-4">
+                                    <h3 class="text-sm/4 font-semibold text-indigo-600">Access Your List</h3>
+                                    <p class="mt-2 text-lg font-medium tracking-tight text-gray-950">Access Your List</p>
+                                    <p class="mt-2 max-w-lg text-sm/6 text-gray-600">Access Your List Content</p>
+                                </div>
+                            </div>
+                            <div class="pointer-events-none absolute inset-px rounded-lg shadow ring-1 ring-black/5"></div>
+                        </div>
+
+                        <!-- Picked For You Section -->
+                        <div class="relative lg:col-span-2">
+                            <div class="absolute inset-px rounded-lg bg-white max-lg:rounded-b-[2rem] lg:rounded-br-[2rem]"></div>
+                            <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(theme(borderRadius.lg)+1px)] max-lg:rounded-b-[calc(2rem+1px)] lg:rounded-br-[calc(2rem+1px)]">
+                                <img class="h-80 object-cover object-left lg:object-right" src="{% static 'images/main_4.png' %}" alt="Main Image4">
+                                <div class="p-10 pt-4">
+                                    <h3 class="text-sm/4 font-semibold text-indigo-600">Picked For You</h3>
+                                    <p class="mt-2 text-lg font-medium tracking-tight text-gray-950">Picked For You</p>
+                                    <p class="mt-2 max-w-lg text-sm/6 text-gray-600">Picked For Your Favoriate.</p>
+                                </div>
+                            </div>
+                            <div class="pointer-events-none absolute inset-px rounded-lg shadow ring-1 ring-black/5 max-lg:rounded-b-[2rem] lg:rounded-br-[2rem]"></div>
+                        </div>
                     </div>
-                  </div>
-                  <div class="pointer-events-none absolute inset-px rounded-lg shadow ring-1 ring-black/5 lg:rounded-tr-[2rem]"></div>
                 </div>
-                <div class="relative lg:col-span-2">
-                  <div class="absolute inset-px rounded-lg bg-white lg:rounded-bl-[2rem]"></div>
-                  <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(theme(borderRadius.lg)+1px)] lg:rounded-bl-[calc(2rem+1px)]">
-                    <img class="h-80 object-cover object-left lg:object-right" src="{% static 'images/main_2.png' %}" alt="Main Image2">
-                    <div class="p-10 pt-4">
-                      <h3 class="text-sm/4 font-semibold text-indigo-600">Liked Music</h3>
-                      <p class="mt-2 text-lg font-medium tracking-tight text-gray-950">Liked Music</p>
-                      <p class="mt-2 max-w-lg text-sm/6 text-gray-600">Liked Music Content</p>
-                    </div>
-                  </div>
-                  <div class="pointer-events-none absolute inset-px rounded-lg shadow ring-1 ring-black/5 lg:rounded-bl-[2rem]"></div>
-                </div>
-                <div class="relative lg:col-span-2">
-                  <div class="absolute inset-px rounded-lg bg-white"></div>
-                  <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(theme(borderRadius.lg)+1px)]">
-                    <img class="h-80 object-cover object-left lg:object-right" src="{% static 'images/main_3.jpg' %}" alt="Main Image3">
-                    <div class="p-10 pt-4">
-                      <h3 class="text-sm/4 font-semibold text-indigo-600">Access Your List</h3>
-                      <p class="mt-2 text-lg font-medium tracking-tight text-gray-950">Access Your List</p>
-                      <p class="mt-2 max-w-lg text-sm/6 text-gray-600">Access Your List Content</p>
-                    </div>
-                  </div>
-                  <div class="pointer-events-none absolute inset-px rounded-lg shadow ring-1 ring-black/5"></div>
-                </div>
-                <div class="relative lg:col-span-2">
-                  <div class="absolute inset-px rounded-lg bg-white max-lg:rounded-b-[2rem] lg:rounded-br-[2rem]"></div>
-                  <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(theme(borderRadius.lg)+1px)] max-lg:rounded-b-[calc(2rem+1px)] lg:rounded-br-[calc(2rem+1px)]">
-                    <img class="h-80 object-cover object-left lg:object-right" src="{% static 'images/main_4.png' %}" alt="Main Image4">
-                    <div class="p-10 pt-4">
-                      <h3 class="text-sm/4 font-semibold text-indigo-600">Picked For You</h3>
-                      <p class="mt-2 text-lg font-medium tracking-tight text-gray-950">Picked For You</p>
-                      <p class="mt-2 max-w-lg text-sm/6 text-gray-600">Picked For Your Favoriate.</p>
-                    </div>
-                  </div>
-                  <div class="pointer-events-none absolute inset-px rounded-lg shadow ring-1 ring-black/5 max-lg:rounded-b-[2rem] lg:rounded-br-[2rem]"></div>
-                </div>
-              </div>
             </div>
-          </div>
-          
         {% endif %}
 
         <!-- Include the Search Results Template -->
         {% include 'search.html' %}
     </div>
-    {% if access_token %}
-
-  <script src="https://sdk.scdn.co/spotify-player.js"></script>
-  <script src="{% static 'js/play_butt.js' %}"></script>
-  {% endif %}
-</body>
-</html>
+{% endblock %}

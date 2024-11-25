@@ -17,6 +17,7 @@ import base64
 import requests
 
 
+
 # Load environment variables from .env file
 from dotenv import load_dotenv
 load_dotenv()
@@ -29,11 +30,13 @@ SPOTIFY_AUTH_URL = "https://accounts.spotify.com/authorize"
 SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token"
 
 # Main page view function
+
 def main_page_view(request):
     context = {}
     search_functions = search()
 
-    active_tab = request.POST.get("active_tab", "all_results")  # Default to 'all_results' if no tab is clicked
+    # Get active tab with default to 'all_results'
+    active_tab = request.POST.get("active_tab", "all_results")
     context["active_tab"] = active_tab
 
     # Handle search if the form is submitted
@@ -41,66 +44,85 @@ def main_page_view(request):
         search_query = request.POST.get("search_query")
         token = get_token()
 
-        # Artists pagination
-        if active_tab == "all_results" or active_tab == "artists":
-            artist_results = search_functions["search_for_artist"](token, search_query)
-            artist_paginator = Paginator(artist_results, 10)  # 10 artists per page
-            artist_page = request.POST.get("artist_page", 1)
+        try:
+            # Artists pagination
+            if active_tab == "all_results" or active_tab == "artists":
+                artist_results = search_functions["search_for_artist"](token, search_query)
+                if isinstance(artist_results, list):  # Check if we got a valid result
+                    artist_paginator = Paginator(artist_results, 10)
+                    artist_page = request.POST.get("artist_page", 1)
 
-            try:
-                artists = artist_paginator.page(artist_page)
-            except PageNotAnInteger:
-                artists = artist_paginator.page(1)
-            except EmptyPage:
-                artists = artist_paginator.page(artist_paginator.num_pages)
+                    try:
+                        artists = artist_paginator.page(artist_page)
+                    except PageNotAnInteger:
+                        artists = artist_paginator.page(1)
+                    except EmptyPage:
+                        artists = artist_paginator.page(artist_paginator.num_pages)
 
-            context['artists'] = artists
-            context['artist_paginator'] = artist_paginator
+                    context['artists'] = artists
+                    context['artist_paginator'] = artist_paginator
 
-        # Tracks pagination
-        if active_tab == "all_results" or active_tab == "tracks":
-            track_results = search_functions["search_for_tracks"](token, search_query)
-            track_paginator = Paginator(track_results, 10)  # 10 tracks per page
-            track_page = request.POST.get("track_page", 1)
+            # Tracks pagination
+            if active_tab == "all_results" or active_tab == "tracks":
+                track_results = search_functions["search_for_tracks"](token, search_query)
+                if isinstance(track_results, list):  # Check if we got a valid result
+                    track_paginator = Paginator(track_results, 10)
+                    track_page = request.POST.get("track_page", 1)
 
-            try:
-                tracks = track_paginator.page(track_page)
-            except PageNotAnInteger:
-                tracks = track_paginator.page(1)
-            except EmptyPage:
-                tracks = track_paginator.page(track_paginator.num_pages)
+                    try:
+                        tracks = track_paginator.page(track_page)
+                    except PageNotAnInteger:
+                        tracks = track_paginator.page(1)
+                    except EmptyPage:
+                        tracks = track_paginator.page(track_paginator.num_pages)
 
-            context['tracks'] = tracks
-            context['track_paginator'] = track_paginator
+                    context['tracks'] = tracks
+                    context['track_paginator'] = track_paginator
 
-        # Albums pagination
-        if active_tab == "all_results" or active_tab == "albums":
-            album_results = search_functions["search_for_albums"](token, search_query)
-            album_paginator = Paginator(album_results, 10)  # 10 albums per page
-            album_page = request.POST.get("album_page", 1)
+            # Albums pagination
+            if active_tab == "all_results" or active_tab == "albums":
+                # Add debug print
+                print(f"Searching for albums with query: {search_query}")
+                album_results = search_functions["search_for_albums"](token, search_query)
+                print(f"Album results count: {len(album_results) if album_results else 0}")
 
-            try:
-                albums = album_paginator.page(album_page)
-            except PageNotAnInteger:
-                albums = album_paginator.page(1)
-            except EmptyPage:
-                albums = album_paginator.page(album_paginator.num_pages)
+                if isinstance(album_results, list):  # Check if we got a valid result
+                    album_paginator = Paginator(album_results, 10)
+                    album_page = request.POST.get("album_page", 1)
 
-            context['albums'] = albums
-            context['album_paginator'] = album_paginator
+                    try:
+                        albums = album_paginator.page(album_page)
+                    except PageNotAnInteger:
+                        albums = album_paginator.page(1)
+                    except EmptyPage:
+                        albums = album_paginator.page(album_paginator.num_pages)
+
+                    context['albums'] = albums
+                    context['album_paginator'] = album_paginator
+
+            # Add search query to context for form persistence
+            context['search_query'] = search_query
+
+        except Exception as e:
+            print(f"Error in search: {str(e)}")
+            messages.error(request, "An error occurred while searching. Please try again.")
     else:
         # Default context when no search has been made
         context["default_landing"] = True
 
-    # Pass access token for playback
     # Pass tokens to the context
     access_token = request.session.get("access_token")
     refresh_token = request.session.get("refresh_token")
     context['access_token'] = access_token
     context['refresh_token'] = refresh_token
 
-    return render(request, "main_page.html", context)
+    # Debug prints
+    print(f"Context keys: {context.keys()}")
+    print(f"Albums in context: {'albums' in context}")
+    if 'albums' in context:
+        print(f"Number of albums: {len(context['albums'])}")
 
+    return render(request, "main_page.html", context)
 # Step 2: Start Authorization Flow
 def authorize(request):
     # Redirect user to Spotify authorization page
@@ -270,28 +292,44 @@ def analyze_image_view(request):
             
             # Get artists with pagination
             artist_results = search_functions['search_for_artist'](token, artist_name)
-            artist_paginator = Paginator(artist_results, 10)  # 10 artists per page
-            artist_page = request.POST.get('artist_page', 1)
+            if isinstance(artist_results, list):
+                artist_paginator = Paginator(artist_results, 10)  # 10 artists per page
+                artist_page = request.POST.get('artist_page', 1)
 
-            try:
-                artists = artist_paginator.page(artist_page)
-            except PageNotAnInteger:
-                artists = artist_paginator.page(1)
-            except EmptyPage:
-                artists = artist_paginator.page(artist_paginator.num_pages)
+                try:
+                    artists = artist_paginator.page(artist_page)
+                except PageNotAnInteger:
+                    artists = artist_paginator.page(1)
+                except EmptyPage:
+                    artists = artist_paginator.page(artist_paginator.num_pages)
 
-            # Get tracks related to the artist
+                context['artists'] = artists
+                context['artist_paginator'] = artist_paginator
+                print(f"Artists pagination - Total: {artist_paginator.count}, Pages: {artist_paginator.num_pages}")
+
+            # Get tracks related to the artist with pagination
             track_results = search_functions['search_for_tracks'](token, f"artist:{artist_name}")
+            if isinstance(track_results, list):
+                track_paginator = Paginator(track_results, 10)  # 10 tracks per page
+                track_page = request.POST.get('track_page', 1)
+
+                try:
+                    tracks = track_paginator.page(track_page)
+                except PageNotAnInteger:
+                    tracks = track_paginator.page(1)
+                except EmptyPage:
+                    tracks = track_paginator.page(track_paginator.num_pages)
+
+                context['tracks'] = tracks
+                context['track_paginator'] = track_paginator
+                print(f"Tracks pagination - Total: {track_paginator.count}, Pages: {track_paginator.num_pages}")
 
             # Get access token for playback
             access_token = request.session.get('access_token', token)
             refresh_token = request.session.get('refresh_token')
 
-            # Update context with all results
+            # Update context with remaining data
             context.update({
-                'artists': artists,
-                'artist_paginator': artist_paginator,
-                'tracks': track_results,
                 'access_token': access_token,
                 'refresh_token': refresh_token,
                 'active_tab': 'all_results',
@@ -299,8 +337,12 @@ def analyze_image_view(request):
             })
 
             # Debug logging
-            print(f"Found {len(artist_results)} artists")
-            if track_results:
-                print(f"Found {len(track_results)} tracks")
+            print(f"Context keys: {context.keys()}")
+            print(f"Artists in context: {'artists' in context}")
+            print(f"Tracks in context: {'tracks' in context}")
+            if 'artists' in context:
+                print(f"Number of artists per page: {len(context['artists'])}")
+            if 'tracks' in context:
+                print(f"Number of tracks per page: {len(context['tracks'])}")
 
     return render(request, 'image_analysis.html', context)

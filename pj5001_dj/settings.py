@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+from django.contrib.messages import constants as messages
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -38,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     'spotify_app',
+    'firebase_auth',
 ]
 
 MIDDLEWARE = [
@@ -55,7 +57,11 @@ ROOT_URLCONF = "pj5001_dj.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [
+            os.path.join(BASE_DIR, 'root_templates'),  
+            os.path.join(BASE_DIR, 'spotify_app/templates'),
+            os.path.join(BASE_DIR, 'firebase_auth/templates'),
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -131,3 +137,17 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Media files (Uploaded files)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+FIREBASE_CONFIG = {
+    'SERVICE_ACCOUNT_KEY_PATH': os.path.join(BASE_DIR, 'firebase', 'serviceAccountKey.json'),
+}
+
+# Add message settings for user notifications
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'text-gray-500',
+    messages.INFO: 'text-blue-500',
+    messages.SUCCESS: 'text-green-500',
+    messages.WARNING: 'text-yellow-500',
+    messages.ERROR: 'text-red-500',
+}

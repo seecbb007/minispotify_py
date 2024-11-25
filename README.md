@@ -102,3 +102,12 @@ Start the server with:
 
 
 python manage.py runserver
+
+# 11/24
+
+install python
+pip install django
+pip install python-dotenv
+pip install requests
+pip install google-generativeai
+pip install firebase-admin

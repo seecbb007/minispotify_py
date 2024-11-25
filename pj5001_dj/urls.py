@@ -22,7 +22,9 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('spotify_app.urls')),  # Include the URLs from spotify_app
-]
+    path('auth/', include('firebase_auth.urls')),  # Add this line for Firebase auth
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 # Serve media files during development
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

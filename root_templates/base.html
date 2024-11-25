@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Group Music App{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="dark text-gray-900">
+    <!-- Main Container -->
+    <div class="dark min-h-full">
+        {% include 'navbar.html' %}
+
+        <!-- Content Block -->
+        {% block content %}
+        {% endblock %}
+
+        <!-- Messages -->
+        {% if messages %}
+            <div class="fixed bottom-4 right-4 z-50">
+                {% for message in messages %}
+                    <div class="{% if message.tags %}{{ message.tags }}{% endif %} bg-white shadow-lg rounded-lg p-4 mb-4">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Base Scripts -->
+    {% if access_token %}
+    <script>
+        const spotifyAccessToken = "{{ access_token|safe }}";
+        const spotifyRefreshToken = "{{ refresh_token|safe }}";
+    </script>
+    <script src="https://sdk.scdn.co/spotify-player.js"></script>
+    <script src="{% static 'js/play_butt.js' %}"></script>
+    {% endif %}
+
+    <!-- Extra Scripts Block -->
+    {% block extra_js %}{% endblock %}
+
+    <!-- File Upload Preview Script -->
+    <script>
+        document.getElementById('image_file')?.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('image-preview').src = e.target.result;
+                    document.getElementById('image-preview').classList.remove('hidden');
+                    document.getElementById('upload-icon').classList.add('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function deleteImage() {
+            document.getElementById('image_file').value = '';
+            document.getElementById('image-preview').classList.add('hidden');
+            document.getElementById('upload-icon').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
