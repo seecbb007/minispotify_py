@@ -1,3 +1,4 @@
+<!-- Load Django's static file handling -->
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -5,7 +6,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nav</title>
+    <!-- Link to Tailwind CSS -->
     <link rel="stylesheet" href="{% static 'css/output.css' %}">
+    <!-- File validation script, deferred loading -->
     <script src="{% static 'js/validation_fileButt.js' %}" defer></script>
 </head>
 
@@ -24,6 +27,7 @@
                 <div class="hidden md:flex flex-1 items-center justify-end space-x-8">
                     <!-- Search Form -->
                     <form method="POST" action="{% url 'main_page_view' %}" class="flex flex-1 max-w-2xl mx-4">
+                        <!-- Django CSRF protection -->
                         {% csrf_token %}
                         <div class="flex w-full">
                             <input 
@@ -40,17 +44,19 @@
 
                     <!-- User Actions -->
                     <div class="flex items-center space-x-4">
+                        <!-- Check if user is logged in -->
                         {% if request.session.user_id %}
                             <span class="text-indigo-600 font-mono capitalize">Welcome, {{ request.session.username }}</span>
                             <a href="{% url 'firebase_auth:logout' %}" class="text-gray-700 hover:text-gray-900">Logout</a>
                         {% else %}
+                        <!-- Show welcome message and logout for logged-in users -->
                             <a href="{% url 'firebase_auth:login' %}" class="text-gray-700 hover:text-gray-900">Login</a>
                             <a href="{% url 'firebase_auth:register' %}" class="text-gray-700 hover:text-gray-900">Register</a>
                         {% endif %}
                     </div>
                 </div>
 
-                <!-- Mobile menu button -->
+                <!-- Mobile menu button ,Mobile Menu Button (visible only on mobile) -->
                 <div class="md:hidden" id="menu-toggle">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -104,8 +110,7 @@
                 </div>
             </div>
         </div>
-
-        <!-- Mobile Menu -->
+        <!-- Mobile menu button ,Mobile Menu Button (visible only on mobile) -->
         <div id="mobile-menu" class="md:hidden hidden">
             <div class="px-2 pt-2 pb-3 space-y-1">
                 <!-- Search -->
@@ -169,7 +174,7 @@
         // Mobile menu toggle
         document.getElementById('menu-toggle').addEventListener('click', function() {
             const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.toggle('hidden');
+            mobileMenu.classList.toggle('hidden'); // Toggle mobile menu visibility
         });
     </script>
 </body>

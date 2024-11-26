@@ -48,12 +48,12 @@ def callback(request):
     auth_string = f"{client_id}:{client_secret}"
     auth_bytes = auth_string.encode("utf-8")
     auth_base64 = base64.b64encode(auth_bytes).decode("utf-8")
-
+    # Set up headers for token request
     headers = {
         "Authorization": f"Basic {auth_base64}",
         "Content-Type": "application/x-www-form-urlencoded",
     }
-
+    # Prepare token request data
     data = {
         "grant_type": "authorization_code",
         "code": code,
@@ -62,7 +62,7 @@ def callback(request):
 
     response = requests.post(SPOTIFY_TOKEN_URL, headers=headers, data=data)
     response_data = response.json()
-
+    # Handle unsuccessful token request
     if response.status_code != 200:
         return JsonResponse({'error': response_data.get('error_description', 'Unknown error')})
 
@@ -72,7 +72,7 @@ def callback(request):
     return JsonResponse({"access_token": access_token, "refresh_token": refresh_token})
 
 # Function to refresh access token using refresh token
-@csrf_exempt
+@csrf_exempt # Exempt from CSRF protection as it's an API endpoint
 def refresh_token_endpoint(request):
     if request.method == "POST":
         body = json.loads(request.body)
@@ -87,7 +87,7 @@ def refresh_token_endpoint(request):
             return JsonResponse({"error": str(e)}, status=400)
     else:
         return JsonResponse({"error": "Invalid request method"}, status=405)
-
+# Token Refresh Function
 def refresh_token_function(refresh_token):
     auth_string = f"{client_id}:{client_secret}"
     auth_bytes = auth_string.encode("utf-8")
@@ -129,7 +129,7 @@ def get_token():
     data = {
         "grant_type": "client_credentials",
     }
-
+    # Make token request
     response = requests.post(SPOTIFY_TOKEN_URL, headers=headers, data=data)
     response_data = response.json()
 

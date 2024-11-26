@@ -1,12 +1,15 @@
-
+<!-- Extends the base template 'base.html'. This allows the main page to inherit the structure and layout defined in the base template. -->
 {% extends 'base.html' %}
+<!-- Loads the static template tag to handle static files. -->
 {% load static %}
-
+<!-- Defines the title block. This sets the title of the page to "Home - Group Music App". -->
 {% block title %}Home - Group Music App{% endblock %}
 
+<!-- Defines the content block. This is where the main content of the page will go. -->
 {% block content %}
     <!-- Main Container -->
     <div class="dark min-h-full">
+        <!-- Checks if the access token is not present. If not, displays the login button. -->
         {% if not access_token %}
             <div class="flex justify-center py-4">
                 <a href="{% url 'authorize' %}" class="inline-flex items-center px-6 py-3 text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
@@ -19,11 +22,13 @@
         {% endif %}
 
         <!-- Default Landing Page Content -->
+         <!-- Checks if the default landing page content should be displayed. -->
         {% if default_landing %}
             <div class="py-24 sm:py-26">
                 <div class="mx-auto max-w-2xl px-6 lg:max-w-7xl lg:px-8">
+                    <!-- Displays the username if it exists in the session. -->
                     <h2 class="text-3xl font-semibold text-indigo-600">
-                        Hello, {% if request.session.username %}{{ request.session.username }}{% else %}User Name{% endif %}
+                        Hello, {% if request.session.username %}{{ request.session.username }}{% else %}{% endif %}
                     </h2>
                     <p class="mt-2 max-w-lg text-pretty text-xl font-semibold tracking-tight text-gray-950 sm:text-5xl">Today, Your Music is...</p>
                     <div class="mt-10 grid grid-cols-1 gap-4 sm:mt-16 lg:grid-cols-6 lg:grid-rows-2">

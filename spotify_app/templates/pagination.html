@@ -1,10 +1,13 @@
+<!-- Only show pagination if there are multiple pages -->
 {% if items.has_other_pages %}
 <div class="px-6 py-4 flex items-center justify-center border-t border-gray-200">
     <form method="post" action="{% if current_url %}{% url current_url %}{% else %}{% url 'main_page_view' %}{% endif %}" enctype="multipart/form-data">
         {% csrf_token %}
+        <!-- Preserve search query across pagination -->
         {% if request.POST.search_query %}
             <input type="hidden" name="search_query" value="{{ request.POST.search_query }}">
         {% endif %}
+        <!-- Preserve image analysis state across pagination -->
         {% if current_image %}
             <input type="hidden" name="current_image" value="{{ current_image }}">
             {% if request.FILES.image_file %}
@@ -16,6 +19,7 @@
         <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
             <!-- Previous Page Button -->
             {% if items.has_previous %}
+            
                 <button type="submit" 
                         name="{{ page_param }}" 
                         value="{{ items.previous_page_number }}"
@@ -68,7 +72,7 @@
         </nav>
     </form>
 
-    <!-- Page Information -->
+    <!-- Pagination Information Display -->
     <div class="text-sm text-gray-700 ml-4">
         <span>Page {{ items.number }} of {{ items.paginator.num_pages }}</span>
         <span class="ml-1">({{ items.paginator.count }} total items)</span>

@@ -1,9 +1,12 @@
+<!--  This base.html in Django is a template that serves as a base templates. It defines a common structure and layout that can be extended by other templates, promoting reusability and consistency across the web application. -->
+<!-- Loads the static template tag to handle static files. -->
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--   Defines a block for the page title that can be overridden by child templates. -->
     <title>{% block title %}Group Music App{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/output.css' %}">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
@@ -12,19 +15,23 @@
 <body class="dark text-gray-900">
     <!-- Main Container -->
     <div class="dark min-h-full">
+        <!-- Includes a navigation bar template. -->
         {% include 'navbar.html' %}
 
         <!-- Content Block -->
+         <!-- in Django templates are used to define a block of content that can be overridden by child templates. This is part of Django's template inheritance system. -->
         {% block content %}
         {% endblock %}
 
         <!-- Messages -->
+        <!-- Used to display messages to the user in a Django template. These messages are typically used to provide feedback to the user, such as success, error, or informational messages. --> 
         {% if messages %}
             <div class="fixed bottom-4 right-4 z-50">
                 {% for message in messages %}
                     <div class="{% if message.tags %}{{ message.tags }}{% endif %} bg-white shadow-lg rounded-lg p-4 mb-4">
                         {{ message }}
                     </div>
+                    
                 {% endfor %}
             </div>
         {% endif %}
@@ -40,10 +47,12 @@
     <script src="{% static 'js/play_butt.js' %}"></script>
     {% endif %}
 
-    <!-- Extra Scripts Block -->
+    <!-- Extra Scripts Block, This block is a placeholder for additional JavaScript that can be added by child templates. -->
+
     {% block extra_js %}{% endblock %}
 
     <!-- File Upload Preview Script -->
+     <!-- This script handles the preview of an image file when a user selects a file to upload. It also provides a function to delete the selected image and reset the preview. -->
     <script>
         document.getElementById('image_file')?.addEventListener('change', function(e) {
             const file = e.target.files[0];
@@ -59,8 +68,11 @@
         });
 
         function deleteImage() {
+            // Clears the file input.
             document.getElementById('image_file').value = '';
+            // Hides the image preview by adding the hidden class.
             document.getElementById('image-preview').classList.add('hidden');
+            // Makes the upload icon visible by removing the hidden class.
             document.getElementById('upload-icon').classList.remove('hidden');
         }
     </script>
