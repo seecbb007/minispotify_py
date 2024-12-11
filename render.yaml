@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: pj5001-dj
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn pj5001_dj.wsgi:application
