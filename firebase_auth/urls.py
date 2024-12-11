@@ -15,4 +15,7 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     # When the user visits 'logout/', the logout_view function will be called
     path('logout/', views.logout_view, name='logout'),
+    path('like-track/', views.like_track, name='like_track'),
+    path('liked-songs/', views.liked_songs_view, name='liked_songs'),
+    path('pick_it_for_you/', views.pick_it_for_you, name='pick_it_for_you'),
 ]

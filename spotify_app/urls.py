@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
-from . import authorization  # If you've kept the authorization functions in authorization.py
-# If you've moved the authorization functions to views.py, you don't need this import
+from . import authorization  
+
 
 urlpatterns = [
     # " " is the main page

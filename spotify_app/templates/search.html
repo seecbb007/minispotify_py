@@ -125,70 +125,106 @@
             {% endif %}
         {% endif %}
 
-        <!-- Tracks Results -->
-         <!-- Check if the active tab is "all_results" or "tracks" -->
-        {% if active_tab == 'all_results' or active_tab == 'tracks' %}
-        <!-- if active tab is  "tracks" showed the following HTML  -->
-            {% if tracks %}
-                <div class="mb-8 bg-white rounded-lg shadow-md overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <h3 class="text-xl font-bold text-gray-900">Tracks Found</h3>
-                    </div>
-                    <div class="divide-y divide-gray-200">
-                        {% for track in tracks %}
-                            <div class="p-6 flex items-start space-x-6 hover:bg-gray-50 transition duration-150">
-                                {% if track.album.images %}
-                                    <img src="{{ track.album.images.0.url }}" 
-                                         alt="{{ track.name }}" 
-                                         class="w-20 h-20 rounded-md object-cover shadow-md">
-                                {% endif %}
-                                <div class="flex-1 min-w-0">
-                                    <div class="flex items-center justify-between">
-                                        <h4 class="text-lg font-semibold text-gray-900 truncate">{{ track.name }}</h4>
-                                        <button 
-                                            class="play-button inline-flex items-center px-4 py-2 bg-green-500 hover:bg-green-600 text-white text-sm font-medium rounded-full shadow-sm transition-colors duration-150 disabled:opacity-50"
-                                            data-track-uri="spotify:track:{{ track.id }}"
-                                        >
-                                            <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
-                                                <path d="M8 5v14l11-7z"/>
-                                            </svg>
-                                            <span>Play</span>
-                                        </button>
-                                    </div>
-                                    <div class="mt-1 flex flex-col sm:flex-row sm:flex-wrap sm:space-x-6">
-                                        <div class="mt-2 flex items-center text-sm text-gray-500">
-                                            <svg class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                                                <path d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"/>
-                                            </svg>
-                                            Artists: {% for artist in track.artists %}{{ artist.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
-                                        </div>
-                                        <div class="mt-2 flex items-center text-sm text-gray-500">
-                                            <svg class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                                                <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zm12.553 1.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z"/>
-                                            </svg>
-                                            Album: {{ track.album.name }}
-                                        </div>
-                                        <div class="mt-2 flex items-center text-sm text-gray-500">
-                                            <svg class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                                                <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"/>
-                                            </svg>
-                                            Duration: {{ track.formatted_duration }}
-                                        </div>
-                                        <div class="mt-2 flex items-center text-sm text-gray-500">
-                                            <svg class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                            </svg>
-                                            Popularity: {{ track.popularity }}/100
-                                        </div>
-                                    </div>
+<!-- Tracks Results -->
+{% if active_tab == 'all_results' or active_tab == 'tracks' %}
+    {% if tracks %}
+        <div class="mb-8 bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-xl font-bold text-gray-900">Tracks Found</h3>
+            </div>
+            <div class="divide-y divide-gray-200">
+                {% for track in tracks %}
+                    <div class="p-6 flex items-start space-x-6 hover:bg-gray-50 transition duration-150">
+                        {% if track.album.images %}
+                            <img src="{{ track.album.images.0.url }}" 
+                                 alt="{{ track.name }}" 
+                                 class="w-20 h-20 rounded-md object-cover shadow-md">
+                        {% endif %}
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between">
+                                <h4 class="text-lg font-semibold text-gray-900 truncate">{{ track.name }}</h4>
+                                <button 
+                                    class="play-button inline-flex items-center px-4 py-2 bg-green-500 hover:bg-green-600 text-white text-sm font-medium rounded-full shadow-sm transition-colors duration-150 disabled:opacity-50"
+                                    data-track-uri="spotify:track:{{ track.id }}"
+                                >
+                                    <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M8 5v14l11-7z"/>
+                                    </svg>
+                                    <span>Play</span>
+                                </button>
+                            </div>
+                            <div class="mt-1 flex flex-col sm:flex-row sm:flex-wrap sm:space-x-6">
+                                <div class="mt-2 flex items-center text-sm text-gray-500">
+                                    <svg class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"/>
+                                    </svg>
+                                    Artists: {% for artist in track.artists %}{{ artist.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                                </div>
+                                <div class="mt-2 flex items-center text-sm text-gray-500">
+                                    <svg class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zm12.553 1.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z"/>
+                                    </svg>
+                                    Album: {{ track.album.name }}
+                                </div>
+                                <div class="mt-2 flex items-center text-sm text-gray-500">
+                                    <svg class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"/>
+                                    </svg>
+                                    Duration: {{ track.formatted_duration }}
+                                </div>
+                                <div class="mt-2 flex items-center text-sm text-gray-500">
+                                    <svg class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                    </svg>
+                                    Popularity: {{ track.popularity }}/100
+                                </div>
+                                <div class="mt-2 flex items-center text-sm text-gray-500">
+                                    <button 
+                                        class="like-button inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-full shadow-sm transition-colors duration-150"
+                                        onclick="likeTrack('{{ track.id }}', '{{ track.name }}', '{% for artist in track.artists %}{{ artist.name }}{% if not forloop.last %}, {% endif %}{% endfor %}')"
+                                    >
+                                        <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6.42 3.42 5 5.5 5c1.74 0 3.41 1.01 4.5 2.09C11.09 6.01 12.76 5 14.5 5 16.58 5 18 6.42 18 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                        </svg>
+                                        <span>Like</span>
+                                    </button>
                                 </div>
                             </div>
-                        {% endfor %}
+                        </div>
                     </div>
-                    {% include "pagination.html" with items=tracks paginator=track_paginator page_param="track_page" %}
-                </div>
-            {% endif %}
-        {% endif %}
+                {% endfor %}
+            </div>
+            {% include "pagination.html" with items=tracks paginator=track_paginator page_param="track_page" %}
+        </div>
+    {% endif %}
+{% endif %}
+
+<script>
+    function likeTrack(trackId, trackName, trackArtist) {
+        fetch("{% url 'firebase_auth:like_track' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}",
+            },
+            body: JSON.stringify({
+                track_id: trackId,
+                track_name: trackName,
+                track_artist: trackArtist,
+            }),
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.success) {
+                alert("Track added to favorites!");
+            } else {
+                alert("Failed to like the track: " + data.error);
+            }
+        })
+        .catch((error) => console.error("Error:", error));
+    }
+</script>
+
 
         <!-- Albums Results -->
           <!-- Check if the active tab is "all_results" or "albums" -->

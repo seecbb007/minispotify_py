@@ -45,6 +45,7 @@ def analyze_image_with_gemini(file_path):
             # Create the prompt using the uploaded image URI
             prompt = [
                 uploaded_file,
+                # Add a newline for better formatting
                 "\n\n",
                 "Identify the artist or album from the given image and provide the response as a dictionary with keys 'artist_name' and 'album_name'."
             ]
