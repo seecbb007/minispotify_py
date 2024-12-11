@@ -98,15 +98,13 @@
                             Analyze
                         </button>
                     </form>
-                    <div class=""relative>
-                        <img id="image-preview" class="w-10 h-10 rounded-full object-cover hidden alt="Preview">
+                    <div class="relative">
+                        <img id="image-preview" class="w-10 h-10 rounded-full object-cover hidden" alt="Preview">
                         <svg id="upload-icon" class="w-10 h-10 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <circle cx="12" cy="12" r="10" stroke-width="1.5"/>
                             <circle cx="12" cy="10" r="3" stroke-width="1.5"/>
                             <path stroke-width="1.5" d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662"/>
                         </svg>
-
-
                     </div>
                     
                     <!-- Divider -->
@@ -169,7 +167,7 @@
                 </div>
                 <div class="relative">
                     
-                    < img id="image-preview" class="w-10 h-10 rounded-full object-cover hidden" alt="Preview">
+                    <img id="image-preview" class="w-10 h-10 rounded-full object-cover hidden" alt="Preview">
                     <svg id="upload-icon" class="w-10 h-10 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <circle cx="12" cy="12" r="10" stroke-width="1.5"/>
                         <circle cx="12" cy="10" r="3" stroke-width="1.5"/>
@@ -212,62 +210,7 @@
             mobileMenu.classList.toggle('hidden');
         });
     </script>
-    {% comment %} <script>
-        const form = document.getElementById("audio-recognition-form");
-        const audioFileInput = document.getElementById("audio_file");
-        const chooseFileButton = document.getElementById("choose-file-button");
-        const recognitionResult = document.getElementById("recognition-result");
-        const resultTitle = document.getElementById("result-title");
-        const resultDetails = document.getElementById("result-details");
-    
-        // 更新按钮文字为选择的文件名
-        audioFileInput.addEventListener("change", function () {
-            const fileName = audioFileInput.files[0]?.name || "Choose File";
-            chooseFileButton.textContent = fileName;
-        });
-    
-        // 提交表单
-        form.onsubmit = async function (event) {
-            event.preventDefault(); // 防止页面跳转
-    
-            const audioFile = audioFileInput.files[0];
-            if (!audioFile) {
-                alert("Please select an audio file.");
-                return;
-            }
-    
-            const formData = new FormData();
-            formData.append("audio_file", audioFile);
-    
-            try {
-                // 调用后端 API
-                const response = await fetch("{% url 'audio_recognition_view' %}", {
-                    method: "POST",
-                    body: formData,
-                    headers: {
-                        "X-CSRFToken": "{{ csrf_token }}", // 添加 CSRF Token
-                    },
-                });
-                const data = await response.json();
-    
-                // 显示结果
-                recognitionResult.classList.remove("hidden");
-                if (data.error) {
-                    resultTitle.textContent = "Error:";
-                    resultDetails.textContent = data.error;
-                } else {
-                    const auddResult = data.audd_result || {};
-                    resultTitle.textContent = `Song: ${auddResult.title} by ${auddResult.artist}`;
-                    resultDetails.textContent = `Album: ${auddResult.album} | Release Date: ${auddResult.release_date}`;
-                }
-            } catch (error) {
-                console.error("Error:", error);
-                resultTitle.textContent = "Error:";
-                resultDetails.textContent = "An error occurred while processing your request.";
-                recognitionResult.classList.remove("hidden");
-            }
-        };
-    </script> {% endcomment %}
+   
     <script>
         const form = document.getElementById("audio-recognition-form");
         const audioFileInput = document.getElementById("audio_file");

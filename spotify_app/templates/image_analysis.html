@@ -1,156 +1,133 @@
-
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music AI Analysis Result</title>
-    <link href="{% static 'css/output.css' %}" rel="stylesheet">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
-</head>
-<body>
-    {% include 'navbar.html' %}
 
-    <div class="flex flex-col items-center justify-center min-h-screen px-4">
-        <div class="w-full max-w-4xl">
-            <h1 class="text-3xl font-bold text-center mb-6">Music AI Analysis Result</h1>
+{% block title %}Music AI Analysis Result{% endblock %}
 
-            <!-- Image Upload Result Section -->
-            <div class="flex flex-col items-center mb-6">
-                <h2 class="text-lg font-semibold mb-4">This is What I Found Based on Uploaded Image</h2>
-                
-                {% if image_url %}
-                    <div class="h-60 w-60">
-                        <img src="{{ image_url }}" alt="Uploaded Image" class="rounded-lg border p-2 h-60 w-60 object-cover">
-                    </div>
-                {% endif %}
-            </div>
+{% block content %}
+<div class="flex flex-col items-center justify-center min-h-screen px-4">
+    <div class="w-full max-w-4xl">
+        <h1 class="text-3xl font-bold text-center mb-6">Music AI Analysis Result</h1>
 
-            <div id="error-message" class="hidden text-red-500 text-center mb-4">
-                Please upload a valid PNG file.
-            </div>
-
-            <div class="text-center mb-6">
-                <p class="font-bold">Artist: {{ analysis_result.artist }}</p>
-            </div>
-
-            <!-- Search Results Section -->
-            {% if artists or tracks %}
-                <div class="bg-white shadow rounded-lg overflow-hidden">
-                    <!-- Artists Section -->
-                    {% if artists %}
-                        <div class="p-6 border-b border-gray-200">
-                            <h3 class="text-xl font-bold mb-4">Artists Found:</h3>
-                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                                {% for artist in artists %}
-                                    <div class="flex flex-col items-center">
-                                        {% if artist.images and artist.images|length > 0 %}
-                                            <img src="{{ artist.images.0.url }}" 
-                                                 alt="{{ artist.name }}" 
-                                                 class="w-24 h-24 rounded-full object-cover shadow-md">
-                                        {% else %}
-                                            <div class="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center">
-                                                <svg class="h-12 w-12 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                                                    <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z"/>
-                                                </svg>
-                                            </div>
-                                        {% endif %}
-                                        <h4 class="mt-2 font-medium text-gray-900 text-center">{{ artist.name }}</h4>
-                                        {% if artist.genres %}
-                                            <p class="text-sm text-gray-500 text-center">
-                                                {{ artist.genres|slice:":2"|join:", " }}
-                                                {% if artist.genres|length > 2 %}...{% endif %}
-                                            </p>
-                                        {% endif %}
-                                    </div>
-                                {% endfor %}
-                            </div>
-
-                            
-                           
-
-                            <!-- Artists Pagination -->
-                            {% if artists.has_other_pages %}
-                                {% with current_url="analyze_image" %}
-                                    {% include "pagination.html" with items=artists paginator=artist_paginator page_param="artist_page" current_image=image_url %}
-                                {% endwith %}
-                            {% endif %}
-                        </div>
-                    {% endif %}
-
-                    <!-- Tracks Section -->
-                    {% if tracks %}
-                        <div class="p-6">
-                            <h3 class="text-xl font-bold mb-4">Related Tracks:</h3>
-                            <div class="space-y-4">
-                                {% for track in tracks %}
-                                    <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
-                                        {% if track.album.images %}
-                                            <img src="{{ track.album.images.0.url }}" 
-                                                 alt="{{ track.name }}" 
-                                                 class="w-16 h-16 rounded-md object-cover shadow-sm">
-                                        {% endif %}
-                                        <div class="flex-1 min-w-0">
-                                            <h4 class="text-lg font-semibold text-gray-900 truncate">{{ track.name }}</h4>
-                                            <p class="text-sm text-gray-500">
-                                                {% for artist in track.artists %}
-                                                    {{ artist.name }}{% if not forloop.last %}, {% endif %}
-                                                {% endfor %}
-                                            </p>
-                                            <p class="text-sm text-gray-500">Album: {{ track.album.name }}</p>
-                                        </div>
-                                        <button 
-                                            class="play-button inline-flex items-center px-4 py-2 bg-green-500 hover:bg-green-600 text-white text-sm font-medium rounded-full shadow-sm transition-colors duration-150 disabled:opacity-50"
-                                            data-track-uri="spotify:track:{{ track.id }}"
-                                        >
-                                            <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
-                                                <path d="M8 5v14l11-7z"/>
-                                            </svg>
-                                            <span>Play</span>
-                                        </button>
-                                    </div>
-                                {% endfor %}
-                            </div>
-
-                           
-
-                            <!-- Tracks Pagination -->
-                            {% if tracks.has_other_pages %}
-                                {% with current_url="analyze_image" %}
-                                    {% include "pagination.html" with items=tracks paginator=track_paginator page_param="track_page" current_image=image_url %}
-                                {% endwith %}
-                            {% endif %}
-                        </div>
-                    {% endif %}
-                </div>
-            {% else %}
-                <div class="text-center text-gray-500">
-                    No results found from Spotify API.
+        <!-- Image Upload Result Section -->
+        <div class="flex flex-col items-center mb-6">
+            <h2 class="text-lg font-semibold mb-4">This is What I Found Based on Uploaded Image</h2>
+            
+            {% if image_url %}
+                <div class="h-60 w-60">
+                    <img src="{{ image_url }}" alt="Uploaded Image" class="rounded-lg border p-2 h-60 w-60 object-cover">
                 </div>
             {% endif %}
         </div>
-    </div>
 
-    <!-- Messages -->
-    {% if messages %}
-        <div class="fixed bottom-4 right-4 z-50">
-            {% for message in messages %}
-                <div class="{% if message.tags %}{{ message.tags }}{% endif %} bg-white shadow-lg rounded-lg p-4 mb-4">
-                    {{ message }}
-                </div>
-            {% endfor %}
+        <div id="error-message" class="hidden text-red-500 text-center mb-4">
+            Please upload a valid PNG file.
         </div>
-    {% endif %}
 
-    <!-- Scripts -->
-    {% if access_token %}
-    <script>
-        const spotifyAccessToken = "{{ access_token|safe }}";
-        const spotifyRefreshToken = "{{ refresh_token|safe }}";
-    </script>
-    <script src="https://sdk.scdn.co/spotify-player.js"></script>
-    <script src="{% static 'js/play_butt.js' %}"></script>
-    {% endif %}
-</body>
-</html>
+        <div class="text-center mb-6">
+            <p class="font-bold">Artist: {{ analysis_result.artist }}</p>
+        </div>
+
+        <!-- Search Results Section -->
+        {% if artists or tracks %}
+            <div class="bg-white shadow rounded-lg overflow-hidden">
+                <!-- Artists Section -->
+                {% if artists %}
+                    <div class="p-6 border-b border-gray-200">
+                        <h3 class="text-xl font-bold mb-4">Artists Found:</h3>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                            {% for artist in artists %}
+                                <div class="flex flex-col items-center">
+                                    {% if artist.images and artist.images|length > 0 %}
+                                        <img src="{{ artist.images.0.url }}" 
+                                             alt="{{ artist.name }}" 
+                                             class="w-24 h-24 rounded-full object-cover shadow-md">
+                                    {% else %}
+                                        <div class="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center">
+                                            <svg class="h-12 w-12 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z"/>
+                                            </svg>
+                                        </div>
+                                    {% endif %}
+                                    <h4 class="mt-2 font-medium text-gray-900 text-center">{{ artist.name }}</h4>
+                                    {% if artist.genres %}
+                                        <p class="text-sm text-gray-500 text-center">
+                                            {{ artist.genres|slice:":2"|join:", " }}
+                                            {% if artist.genres|length > 2 %}...{% endif %}
+                                        </p>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Artists Pagination -->
+                        {% if artists.has_other_pages %}
+                            {% with current_url="analyze_image" %}
+                                {% include "pagination.html" with items=artists paginator=artist_paginator page_param="artist_page" current_image=image_url %}
+                            {% endwith %}
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                <!-- Tracks Section -->
+                {% if tracks %}
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-4">Related Tracks:</h3>
+                        <div class="space-y-4">
+                            {% for track in tracks %}
+                                <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
+                                    {% if track.album.images %}
+                                        <img src="{{ track.album.images.0.url }}" 
+                                             alt="{{ track.name }}" 
+                                             class="w-16 h-16 rounded-md object-cover shadow-sm">
+                                    {% endif %}
+                                    <div class="flex-1 min-w-0">
+                                        <h4 class="text-lg font-semibold text-gray-900 truncate">{{ track.name }}</h4>
+                                        <p class="text-sm text-gray-500">
+                                            {% for artist in track.artists %}
+                                                {{ artist.name }}{% if not forloop.last %}, {% endif %}
+                                            {% endfor %}
+                                        </p>
+                                        <p class="text-sm text-gray-500">Album: {{ track.album.name }}</p>
+                                    </div>
+                                    <button 
+                                        class="play-button inline-flex items-center px-4 py-2 bg-green-500 hover:bg-green-600 text-white text-sm font-medium rounded-full shadow-sm transition-colors duration-150 disabled:opacity-50"
+                                        data-track-uri="spotify:track:{{ track.id }}"
+                                    >
+                                        <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M8 5v14l11-7z"/>
+                                        </svg>
+                                        <span>Play</span>
+                                    </button>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Tracks Pagination -->
+                        {% if tracks.has_other_pages %}
+                            {% with current_url="analyze_image" %}
+                                {% include "pagination.html" with items=tracks paginator=track_paginator page_param="track_page" current_image=image_url %}
+                            {% endwith %}
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="text-center text-gray-500">
+                No results found from Spotify API.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Add any page-specific scripts if needed -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Reinitialize image preview functionality
+    if (typeof initializeImagePreview === 'function') {
+        initializeImagePreview();
+    }
+});
+</script>
+{% endblock %}

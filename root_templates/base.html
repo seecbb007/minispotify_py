@@ -53,28 +53,7 @@
 
     <!-- File Upload Preview Script -->
      <!-- This script handles the preview of an image file when a user selects a file to upload. It also provides a function to delete the selected image and reset the preview. -->
-    <script>
-        document.getElementById('image_file')?.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('image-preview').src = e.target.result;
-                    document.getElementById('image-preview').classList.remove('hidden');
-                    document.getElementById('upload-icon').classList.add('hidden');
-                }
-                reader.readAsDataURL(file);
-            }
-        });
-
-        function deleteImage() {
-            // Clears the file input.
-            document.getElementById('image_file').value = '';
-            // Hides the image preview by adding the hidden class.
-            document.getElementById('image-preview').classList.add('hidden');
-            // Makes the upload icon visible by removing the hidden class.
-            document.getElementById('upload-icon').classList.remove('hidden');
-        }
-    </script>
+   <!-- In base.html, replace the existing File Upload Preview Script with: -->
+    <script src="{% static 'js/image_preview.js' %}"></script>
 </body>
 </html>

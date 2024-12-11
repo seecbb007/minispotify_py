@@ -866,10 +866,6 @@ video {
   width: 1px;
 }
 
-.w-8 {
-  width: 2rem;
-}
-
 .min-w-0 {
   min-width: 0px;
 }
@@ -1533,16 +1529,6 @@ video {
 
 .ease-in-out {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.hover\:border-green-600:hover {
-  --tw-border-opacity: 1;
-  border-color: rgb(22 163 74 / var(--tw-border-opacity));
-}
-
-.hover\:border-black:hover {
-  --tw-border-opacity: 1;
-  border-color: rgb(0 0 0 / var(--tw-border-opacity));
 }
 
 .hover\:bg-gray-100:hover {
