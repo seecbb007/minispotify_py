@@ -22,7 +22,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-=retwu5(61abkl
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'pj5001-dj.onrender.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'project5001.onrender.com']
 
 # Application definition
 INSTALLED_APPS = [
