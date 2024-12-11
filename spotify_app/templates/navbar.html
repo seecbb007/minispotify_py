@@ -19,9 +19,12 @@
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16 border-b-2 border-black">
                 <!-- Logo -->
+                 
+                <img id="icon-preview" class="w-10 h-10 rounded-full object-cover mr-2" alt="Preview" src="{% static 'images/icon.png' %}">
                 <a href="{% url 'dashboard' %}" class="shrink-0 text-xl font-mono text-black">
                     EZII_MusicApp
                 </a>
+
 
                 <!-- Search and Actions - Desktop -->
                 <div class="hidden md:flex flex-1 items-center justify-end space-x-8">
