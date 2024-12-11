@@ -28,7 +28,7 @@
                 <div class="mx-auto max-w-2xl px-6 lg:max-w-7xl lg:px-8">
                     <!-- Displays the username if it exists in the session. -->
                     <h2 class="text-3xl font-semibold text-indigo-600">
-                        Hello, {% if request.session.username %}{{ request.session.username }}{% else %}{% endif %}
+                        Hello {% if request.session.username %}{{ request.session.username }}{% else %}{% endif %}
                     </h2>
                     <p class="mt-2 max-w-lg text-pretty text-xl font-semibold tracking-tight text-gray-950 sm:text-5xl">Today, Your Music is...</p>
                     <div class="mt-10 grid grid-cols-1 gap-4 sm:mt-16 lg:grid-cols-6 lg:grid-rows-2">
@@ -75,7 +75,7 @@
                         <div class="relative lg:col-span-3">
                             <div class="absolute inset-px rounded-lg bg-white lg:rounded-bl-[2rem]"></div>
                             <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(theme(borderRadius.lg)+1px)] lg:rounded-bl-[calc(2rem+1px)] hover:shadow-lg transition-shadow duration-300">
-                                <img class="h-80 object-cover object-left lg:object-right" src="{% static 'images/main_2.png' %}" alt="Main Image2">
+                                <img class="h-80 object-cover object-left lg:object-right" src="{% static 'images/main_3.png' %}" alt="Main Image2">
                                 <div class="p-10 pt-4">
                                     <p class="mt-2 text-lg font-medium tracking-tight text-gray-950">Liked Music</p>
                                     <p class="mt-2 max-w-lg text-sm/6 text-gray-600">Explore Songs You Added to Your Liked List.</p>

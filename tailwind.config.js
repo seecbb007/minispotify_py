@@ -6,6 +6,9 @@ module.exports = {
     './spotify_app/templates/**/*.html',
     './**/*.html',
     './spotify_app/**/*.html',
+    './spotify_app/**/*.{html,js}',  // Added .js files
+    './**/templates/**/*.html',      // Added for any app's templates
+    './static/**/*.js',              // Added for static JS files
   ],
   darkMode: 'class',
   theme: {

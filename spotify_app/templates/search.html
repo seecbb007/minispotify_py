@@ -19,7 +19,7 @@
         <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
             <!-- Search Result Header -->
             <h1 class="text-3xl font-bold tracking-tight text-gray-900">Search Results</h1>
-
+            
             <!-- Tabs for Search Result -->
             <div class="mt-6">
                 <nav class="flex space-x-4" aria-label="Tabs">
@@ -180,15 +180,20 @@
                                 </div>
                                 
                                 <div class="mt-2 flex items-center justify-center text-sm text-gray-500">
-                                    <button 
-                                        class="like-button inline-flex items-center justify-center  hover:bg-blue-600 text-white text-sm font-medium rounded-full shadow-sm transition-colors duration-150 p-2"
-                                        onclick="likeTrack('{{ track.id }}', '{{ track.name }}', '{% for artist in track.artists %}{{ artist.name }}{% if not forloop.last %}, {% endif %}{% endfor %}')"
-                                    >
-                                        <!-- Centered SVG -->
-                                        <svg class="w-5 h-5 fill-red-500" viewBox="0 0 24 24">
-                                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6.42 3.42 5 5.5 5c1.74 0 3.41 1.01 4.5 2.09C11.09 6.01 12.76 5 14.5 5 16.58 5 18 6.42 18 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                                        </svg>
-                                    </button>
+                                    <button                                         
+                                        id="like-button-{{ track.id }}"                                         
+                                        class="group like-button flex items-center justify-center p-2 rounded-full transition-all duration-300 ease-in-out border-2 border-gray-300 hover:bg-green-500"                                         
+                                        onclick="likeTrack('{{ track.id }}', '{{ track.name }}', '{% for artist in track.artists %}{{ artist.name }}{% if not forloop.last %}, {% endif %}{% endfor %}')"                                     
+                                    >                                         
+                                        <svg                                              
+                                            id="heart-icon-{{ track.id }}"                                             
+                                            class="w-6 h-6 transition-colors duration-300 group-hover:fill-white m-auto"                                              
+                                            style="fill: #c1121f"                                               
+                                            viewBox="0 0 20 20"                                         
+                                        >                                             
+                                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6.42 3.42 5 5.5 5c1.74 0 3.41 1.01 4.5 2.09C11.09 6.01 12.76 5 14.5 5 16.58 5 18 6.42 18 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>                                         
+                                        </svg>                                     
+                                    </button>                                 
                                 </div>
                             </div>
                         </div>
@@ -200,31 +205,6 @@
     {% endif %}
 {% endif %}
 
-<script>
-    function likeTrack(trackId, trackName, trackArtist) {
-        fetch("{% url 'firebase_auth:like_track' %}", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": "{{ csrf_token }}",
-            },
-            body: JSON.stringify({
-                track_id: trackId,
-                track_name: trackName,
-                track_artist: trackArtist,
-            }),
-        })
-        .then((response) => response.json())
-        .then((data) => {
-            if (data.success) {
-                alert("Track added to favorites!");
-            } else {
-                alert("Failed to like the track: " + data.error);
-            }
-        })
-        .catch((error) => console.error("Error:", error));
-    }
-</script>
 
 
         <!-- Albums Results -->
@@ -274,6 +254,51 @@
 </script>
 
 {% endif %}
-
+<script>
+    function likeTrack(trackId, trackName, trackArtist) {
+        const button = document.getElementById(`like-button-${trackId}`);
+        const heartIcon = document.getElementById(`heart-icon-${trackId}`);
+        
+        fetch("{% url 'firebase_auth:like_track' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}",
+            },
+            body: JSON.stringify({
+                track_id: trackId,
+                track_name: trackName,
+                track_artist: trackArtist,
+            }),
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.success) {
+                // Toggle the liked state
+                const isCurrentlyLiked = button.classList.contains('bg-red-500');
+                
+                if (!isCurrentlyLiked) {
+                    // Change to liked state
+                    button.classList.remove('bg-white', 'hover:bg-gray-100');
+                    button.classList.add('bg-red-500', 'hover:bg-red-600');
+                    heartIcon.classList.remove('text-gray-400');
+                    heartIcon.classList.add('text-white');
+                } else {
+                    // Change back to unliked state
+                    button.classList.remove('bg-red-500', 'hover:bg-red-600');
+                    button.classList.add('bg-white', 'hover:bg-gray-100');
+                    heartIcon.classList.remove('text-white');
+                    heartIcon.classList.add('text-gray-400');
+                }
+            } else {
+                alert("Failed to like the track: " + data.error);
+            }
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+            alert("Failed to process the request");
+        });
+    }
+</script>
 </body>
 </html>
