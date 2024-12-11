@@ -1,6 +1,9 @@
 from django.urls import path
 from . import views
 from . import authorization  
+from django.urls import path
+from .views import recommendation_view
+from .views import audio_recognition_view
 
 
 urlpatterns = [
@@ -15,4 +18,8 @@ urlpatterns = [
     path('authorize/', views.authorize, name='authorize'),  # For initiating Spotify auth
     path('callback/', views.callback, name='callback'),    # For handling Spotify's response
     path('refresh_token/', views.refresh_token, name='refresh_token'),   # Token Refresh Route
+        path('audio-recognition/', audio_recognition_view, name='audio_recognition_view'), # For audio recognition
+    path('song-recognition/', views.song_recognition_view, name='song_recognition_view'), # For song recognition
+    path('recommendation/', views.recommendation_view, name='recommendation_view'), # For recommendation
+    path('top-charts/', views.top_charts_view, name='top_charts_view'), # For top charts
 ]
