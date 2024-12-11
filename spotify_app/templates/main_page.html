@@ -41,9 +41,13 @@
                                     Your browser does not support the video tag.
                                 </video>
                                 <div class="p-10 pt-4">
-                                    <h3 class="text-sm/4 font-semibold text-indigo-600">Top Chart</h3>
                                     <p class="mt-2 text-lg font-medium tracking-tight text-gray-950">Top Chart</p>
-                                    <p class="mt-2 max-w-lg text-sm/6 text-gray-600">Top Chart Content</p>
+                                    <p class="mt-2 max-w-lg text-sm/6 text-gray-600">View Our Global Top Chart</p>
+                                    <a href="{% url 'top_charts_view' %}">
+                                        <button class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md transition duration-150">
+                                            Explore Top Charts
+                                        </button>
+                                    </a>
                                 </div>
                             </div>
                             <div class="pointer-events-none absolute inset-px rounded-lg shadow ring-1 ring-black/5 max-lg:rounded-t-[2rem] lg:rounded-tl-[2rem]"></div>
@@ -55,55 +59,51 @@
                             <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(theme(borderRadius.lg)+1px)] lg:rounded-tr-[calc(2rem+1px)]">
                                 <img class="h-80 object-cover object-left lg:object-right" src="{% static 'images/main_1.png' %}" alt="Main Image1">
                                 <div class="p-10 pt-4">
-                                    <h3 class="text-sm/4 font-semibold text-indigo-600">Recommendations</h3>
                                     <p class="mt-2 text-lg font-medium tracking-tight text-gray-950">Recommendations</p>
-                                    <p class="mt-2 max-w-lg text-sm/6 text-gray-600">Recommendations Content</p>
+                                    <p class="mt-2 max-w-lg text-sm/6 text-gray-600">Find Songs You Might Like!</p>
+                                    <a href="{% url 'recommendation_view' %}">
+                                        <button class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md transition duration-150">
+                                            Explore Recommendations
+                                        </button>
+                                    </a>
                                 </div>
                             </div>
                             <div class="pointer-events-none absolute inset-px rounded-lg shadow ring-1 ring-black/5 lg:rounded-tr-[2rem]"></div>
                         </div>
 
                         <!-- Liked Music Section -->
-                        <div class="relative lg:col-span-2">
+                        <div class="relative lg:col-span-3">
                             <div class="absolute inset-px rounded-lg bg-white lg:rounded-bl-[2rem]"></div>
-                            <a href="{% url 'firebase_auth:liked_songs' %}" class="relative flex h-full flex-col overflow-hidden rounded-[calc(theme(borderRadius.lg)+1px)] lg:rounded-bl-[calc(2rem+1px)] hover:shadow-lg transition-shadow duration-300">
+                            <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(theme(borderRadius.lg)+1px)] lg:rounded-bl-[calc(2rem+1px)] hover:shadow-lg transition-shadow duration-300">
                                 <img class="h-80 object-cover object-left lg:object-right" src="{% static 'images/main_2.png' %}" alt="Main Image2">
                                 <div class="p-10 pt-4">
-                                    <h3 class="text-sm/4 font-semibold text-indigo-600">Liked Music</h3>
                                     <p class="mt-2 text-lg font-medium tracking-tight text-gray-950">Liked Music</p>
-                                    <p class="mt-2 max-w-lg text-sm/6 text-gray-600">Explore the songs you have liked.</p>
+                                    <p class="mt-2 max-w-lg text-sm/6 text-gray-600">Explore Songs You Added to Your Liked List.</p>
+                                    <!-- Add a button or link to navigate to the recommendations page -->
+                                    <a href="{% url 'firebase_auth:liked_songs' %}">
+                                        <button class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md transition duration-150">
+                                            Your Liked List Here
+                                        </button>
+                                    </a>
+                                    </div>
                                 </div>
-                            </a>
                             <div class="pointer-events-none absolute inset-px rounded-lg shadow ring-1 ring-black/5 lg:rounded-bl-[2rem]"></div>
                         </div>
 
-                        <!-- Access Your List Section -->
-                        <div class="relative lg:col-span-2">
-                            <div class="absolute inset-px rounded-lg bg-white"></div>
-                            <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(theme(borderRadius.lg)+1px)]">
-                                <img class="h-80 object-cover object-left lg:object-right" src="{% static 'images/main_3.jpg' %}" alt="Main Image3">
-                                <div class="p-10 pt-4">
-                                    <h3 class="text-sm/4 font-semibold text-indigo-600">Access Your List</h3>
-                                    <p class="mt-2 text-lg font-medium tracking-tight text-gray-950">Access Your List</p>
-                                    <p class="mt-2 max-w-lg text-sm/6 text-gray-600">Access Your List Content</p>
-                                </div>
-                            </div>
-                            <div class="pointer-events-none absolute inset-px rounded-lg shadow ring-1 ring-black/5"></div>
-                        </div>
+                        
 
                         <!-- Picked For You Section -->
-                        <div class="relative lg:col-span-2">
+                        <div class="relative lg:col-span-3">
                             <div class="absolute inset-px rounded-lg bg-white max-lg:rounded-b-[2rem] lg:rounded-br-[2rem]"></div>
                             <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(theme(borderRadius.lg)+1px)] max-lg:rounded-b-[calc(2rem+1px)] lg:rounded-br-[calc(2rem+1px)]">
                                 <img class="h-80 object-cover object-left lg:object-right" src="{% static 'images/main_4.png' %}" alt="Main Image4">
                                 <div class="p-10 pt-4">
-                                    <h3 class="text-sm/4 font-semibold text-indigo-600">Picked For You</h3>
                                     <p class="mt-2 text-lg font-medium tracking-tight text-gray-950">Picked For You</p>
-                                    <p class="mt-2 max-w-lg text-sm/6 text-gray-600">Based on your favorite songs, enjoy our recommendations!</p>
+                                    <p class="mt-2 max-w-lg text-sm/6 text-gray-600">Based On Your Favorite Songs, Enjoy Our Recommendations!</p>
                                     <!-- Add a button or link to navigate to the recommendations page -->
                                     <a href="{% url 'firebase_auth:pick_it_for_you' %}">
                                         <button class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md transition duration-150">
-                                            Explore Recommendations
+                                            Explore Picked Songs For You
                                         </button>
                                     </a>
                                 </div>

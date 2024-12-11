@@ -22,7 +22,7 @@
                  
                 <img id="icon-preview" class="w-10 h-10 rounded-full object-cover mr-2" alt="Preview" src="{% static 'images/icon.png' %}">
                 <a href="{% url 'dashboard' %}" class="shrink-0 text-xl font-mono text-black">
-                    EZII_MusicApp
+                    EZII MusicApp
                 </a>
 
 
@@ -68,73 +68,97 @@
             </div>
         </div>
 
-        <!-- Secondary Navigation Bar -->
-        <div class="bg-gray-50 border-b border-gray-200">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between h-12">
-                    <!-- Navigation Links -->
-                    <div class="hidden md:flex space-x-8">
-                        <a href="{% url 'dashboard' %}" class="px-3 py-2 text-sm font-medium text-gray-900 rounded-md hover:bg-gray-200">Dashboard</a>
-                        <a href="#" class="px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-200">Recommendations</a>
-                        <a href="#" class="px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-200">Top Charts</a>
-                    </div>
+        <!-- Secondary Nav Bar -->
+    <div class="bg-gray-50 border-b border-gray-200">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-12">
+                <!-- Navigation Links -->
+                <div class="hidden md:flex space-x-8">
+                    <a href="{% url 'dashboard' %}" class="px-3 py-2 text-sm font-medium text-gray-900 rounded-md hover:bg-gray-200">Dashboard</a>
+                    <a href="{% url 'recommendation_view' %}" class="px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-200">Recommendations</a>
+                    <a href="{% url 'top_charts_view' %}" class="px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-200">Top Charts</a>
+                </div>
 
-                    <!-- Upload Actions -->
-                    <div class="hidden md:flex items-center space-x-4">
-                        <form action="{% url 'analyze_image' %}" method="post" enctype="multipart/form-data" id="upload-form" class="flex items-center space-x-2">
-                            {% csrf_token %}
-                            <input type="file" name="image_file" id="image_file" accept="image/png" class="hidden">
-                            <div class="flex items-center space-x-2">
-                                <button type="button" onclick="document.getElementById('image_file').click()" 
-                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                    Upload
-                                </button>
-                                <button type="button" onclick="deleteImage()" 
+                <!-- Upload Actions -->
+                <div class="hidden md:flex items-center space-x-4">
+                    <!-- Image Upload Form -->
+                    <form action="{% url 'analyze_image' %}" method="post" enctype="multipart/form-data" id="upload-form" class="flex items-center space-x-2">
+                        {% csrf_token %}
+                        <input type="file" name="image_file" id="image_file" accept="image/png" class="hidden">
+                        <button type="button" onclick="document.getElementById('image_file').click()" 
+                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            Upload Image
+                        </button>
+                        <button type="button" onclick="deleteImage()" 
                                     class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                                     Delete
                                 </button>
-                                <button type="submit" 
-                                    class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                    Analyze
-                                </button>
-                            </div>
-                        </form>
+                        <button type="submit" 
+                            class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            Analyze
+                        </button>
+                    </form>
+                    <div class=""relative>
+                        <img id="image-preview" class="w-10 h-10 rounded-full object-cover hidden alt="Preview">
+                        <svg id="upload-icon" class="w-10 h-10 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <circle cx="12" cy="12" r="10" stroke-width="1.5"/>
+                            <circle cx="12" cy="10" r="3" stroke-width="1.5"/>
+                            <path stroke-width="1.5" d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662"/>
+                        </svg>
 
-                        <!-- Image Preview -->
-                        <div class="relative">
-                            <img id="image-preview" class="w-10 h-10 rounded-full object-cover hidden" alt="Preview">
-                            <svg id="upload-icon" class="w-10 h-10 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <circle cx="12" cy="12" r="10" stroke-width="1.5"/>
-                                <circle cx="12" cy="10" r="3" stroke-width="1.5"/>
-                                <path stroke-width="1.5" d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662"/>
-                            </svg>
-                        </div>
+
                     </div>
+                    
+                    <!-- Divider -->
+                    <div class="h-8 w-px bg-gray-200"></div>
+
+                    <!-- Audio Recognition Form -->
+                    <form id="audio-recognition-form" class="flex items-center space-x-2">
+                        {% csrf_token %}
+                        <input type="file" name="audio_file" id="audio_file" accept="audio/*" class="hidden">
+
+                       
+                        <button type="button" id="choose-file-button" onclick="document.getElementById('audio_file').click()" 
+                        class="inline-flex items-center whitespace-nowrap px-4 py-2 text-sm font-medium border-gray-300  text-gray-700 bg-white border  rounded-md hover:bg-grey-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        
+                        Upload&nbsp;Music
+                    </button>
+                        <button type="submit"
+                            class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            Identify
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
-        <!-- Mobile menu button ,Mobile Menu Button (visible only on mobile) -->
+    </div>
+
+
+        <!-- Mobile Menu -->
         <div id="mobile-menu" class="md:hidden hidden">
             <div class="px-2 pt-2 pb-3 space-y-1">
                 <!-- Search -->
                 <form method="POST" action="{% url 'main_page_view' %}" class="p-2">
                     {% csrf_token %}
-                    <input type="text" name="search_query" placeholder="Search" 
+                    <input type="text" name="search_query" placeholder="Search"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md">
                 </form>
 
                 <!-- Navigation Links -->
-                <a href="{% url 'dashboard' %}" class="block px-3 py-2 text-base font-medium text-gray-700 rounded-md hover:bg-gray-100">Dashboard</a>
-                <a href="#" class="block px-3 py-2 text-base font-medium text-gray-700 rounded-md hover:bg-gray-100">Recommendations</a>
-                <a href="#" class="block px-3 py-2 text-base font-medium text-gray-700 rounded-md hover:bg-gray-100">Top Charts</a>
+                <a href="{% url 'dashboard' %}"
+                    class="block px-3 py-2 text-base font-medium text-gray-700 rounded-md hover:bg-gray-100">Dashboard</a>
+                <a href="#"
+                    class="block px-3 py-2 text-base font-medium text-gray-700 rounded-md hover:bg-gray-100">Recommendations</a>
+                <a href="#" class="block px-3 py-2 text-base font-medium text-gray-700 rounded-md hover:bg-gray-100">Top
+                    Charts</a>
 
                 <!-- Upload Actions -->
                 <div class="p-2 space-y-2">
-                    <button onclick="document.getElementById('image_file').click()" 
+                    <button onclick="document.getElementById('image_file').click()"
                         class="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
                         Upload
                     </button>
-                    <button onclick="deleteImage()" 
+                    <button onclick="deleteImage()"
                         class="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
                         Delete
                     </button>
@@ -143,31 +167,39 @@
                         Analyze
                     </button>
                 </div>
-
+                <div class="relative">
+                    
+                    < img id="image-preview" class="w-10 h-10 rounded-full object-cover hidden" alt="Preview">
+                    <svg id="upload-icon" class="w-10 h-10 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <circle cx="12" cy="12" r="10" stroke-width="1.5"/>
+                        <circle cx="12" cy="10" r="3" stroke-width="1.5"/>
+                        <path stroke-width="1.5" d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662"/>
+                    </svg>
+                </div>
                 <!-- Auth Links -->
                 {% if request.session.user_id %}
-                    <div class="border-t border-gray-200 pt-4 pb-3">
-                        <div class="px-4">
-                            <div class="text-base font-medium text-gray-800">Welcome, {{ request.session.username }}</div>
-                        </div>
-                        <div class="mt-3 space-y-1">
-                            <a href="{% url 'firebase_auth:logout' %}" 
-                                class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100">
-                                Logout
-                            </a>
-                        </div>
+                <div class="border-t border-gray-200 pt-4 pb-3">
+                    <div class="px-4">
+                        <div class="text-base font-medium text-gray-800">Welcome, {{ request.session.username }}</div>
                     </div>
+                    <div class="mt-3 space-y-1">
+                        <a href="{% url 'firebase_auth:logout' %}"
+                            class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100">
+                            Logout
+                        </a>
+                    </div>
+                </div>
                 {% else %}
-                    <div class="border-t border-gray-200 pt-4">
-                        <a href="{% url 'firebase_auth:login' %}" 
-                            class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100">
-                            Login
-                        </a>
-                        <a href="{% url 'firebase_auth:register' %}" 
-                            class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100">
-                            Register
-                        </a>
-                    </div>
+                <div class="border-t border-gray-200 pt-4">
+                    <a href="{% url 'firebase_auth:login' %}"
+                        class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100">
+                        Login
+                    </a>
+                    <a href="{% url 'firebase_auth:register' %}"
+                        class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100">
+                        Register
+                    </a>
+                </div>
                 {% endif %}
             </div>
         </div>
@@ -175,10 +207,113 @@
 
     <script>
         // Mobile menu toggle
-        document.getElementById('menu-toggle').addEventListener('click', function() {
+        document.getElementById('menu-toggle').addEventListener('click', function () {
             const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.toggle('hidden'); // Toggle mobile menu visibility
+            mobileMenu.classList.toggle('hidden');
         });
     </script>
+    {% comment %} <script>
+        const form = document.getElementById("audio-recognition-form");
+        const audioFileInput = document.getElementById("audio_file");
+        const chooseFileButton = document.getElementById("choose-file-button");
+        const recognitionResult = document.getElementById("recognition-result");
+        const resultTitle = document.getElementById("result-title");
+        const resultDetails = document.getElementById("result-details");
+    
+        // 更新按钮文字为选择的文件名
+        audioFileInput.addEventListener("change", function () {
+            const fileName = audioFileInput.files[0]?.name || "Choose File";
+            chooseFileButton.textContent = fileName;
+        });
+    
+        // 提交表单
+        form.onsubmit = async function (event) {
+            event.preventDefault(); // 防止页面跳转
+    
+            const audioFile = audioFileInput.files[0];
+            if (!audioFile) {
+                alert("Please select an audio file.");
+                return;
+            }
+    
+            const formData = new FormData();
+            formData.append("audio_file", audioFile);
+    
+            try {
+                // 调用后端 API
+                const response = await fetch("{% url 'audio_recognition_view' %}", {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}", // 添加 CSRF Token
+                    },
+                });
+                const data = await response.json();
+    
+                // 显示结果
+                recognitionResult.classList.remove("hidden");
+                if (data.error) {
+                    resultTitle.textContent = "Error:";
+                    resultDetails.textContent = data.error;
+                } else {
+                    const auddResult = data.audd_result || {};
+                    resultTitle.textContent = `Song: ${auddResult.title} by ${auddResult.artist}`;
+                    resultDetails.textContent = `Album: ${auddResult.album} | Release Date: ${auddResult.release_date}`;
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                resultTitle.textContent = "Error:";
+                resultDetails.textContent = "An error occurred while processing your request.";
+                recognitionResult.classList.remove("hidden");
+            }
+        };
+    </script> {% endcomment %}
+    <script>
+        const form = document.getElementById("audio-recognition-form");
+        const audioFileInput = document.getElementById("audio_file");
+        const chooseFileButton = document.getElementById("choose-file-button");
+    
+        // Update button text when file is chosen
+        audioFileInput.addEventListener("change", function() {
+            const fileName = audioFileInput.files[0]?.name || "Choose File";
+            chooseFileButton.textContent = fileName;
+        });
+    
+        // Handle form submission
+        form.onsubmit = async function(event) {
+            event.preventDefault();
+    
+            const audioFile = audioFileInput.files[0];
+            if (!audioFile) {
+                alert("Please select an audio file.");
+                return;
+            }
+    
+            const formData = new FormData();
+            formData.append("audio_file", audioFile);
+    
+            try {
+                // First, send the file to the audio recognition endpoint
+                const response = await fetch("{% url 'audio_recognition_view' %}", {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    },
+                });
+    
+                if (response.ok) {
+                    // After successful upload, redirect to song recognition page
+                    window.location.href = "{% url 'song_recognition_view' %}";
+                } else {
+                    const data = await response.json();
+                    alert(data.error || "An error occurred while processing your request.");
+                }
+            } catch (error) {
+                alert("An error occurred while processing your request.");
+            }
+        };
+    </script>
 </body>
+
 </html>

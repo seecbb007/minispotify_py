@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Top 10 Tracks by Country{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-2xl font-bold mb-6 flex items-center text-indigo-600">
+            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
+            </svg>
+            Top 10 Tracks by Country
+        </h2>
+
+        <!-- Country input form -->
+        <form id="topchart-form" method="POST" class="mb-6">
+            {% csrf_token %}
+            <label for="country-name" class="block text-gray-700 font-semibold mb-2">
+                Enter a Country Name:
+            </label>
+            <input type="text" id="country-name" name="country_name" 
+                   placeholder="e.g., United States"
+                   class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-300">
+            <button type="submit" class="w-full bg-green-600 text-white py-2 px-4 mt-4 rounded-lg hover:bg-green-700 transition duration-200">
+                Get Top 10 Tracks
+            </button>
+        </form>
+
+        <!-- Results display -->
+        <div id="chart-results" class="hidden">
+            <h3 class="text-xl font-semibold mb-4">Top 10 Tracks:</h3>
+            <div id="chart_section" class="space-y-4"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('topchart-form').onsubmit = async function(event) {
+        event.preventDefault();
+        const input = document.getElementById('country-name').value.trim();
+        if (!input) {
+            alert("Please enter a country name.");
+            return;
+        }
+
+        const resultsDiv = document.getElementById('chart-results');
+        const chartSection = document.getElementById('chart_section');
+
+        try {
+            // Send request to top_charts_view (to be implemented in views.py)
+            const response = await fetch("{% url 'top_charts_view' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: JSON.stringify({ country: input })
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                chartSection.innerHTML = '';
+                const uniqueTracks = getUniqueTracks(data.recommendations);
+                uniqueTracks.forEach(track => {
+                    const card = createTrackCard(track);
+                    chartSection.appendChild(card);
+                });
+                resultsDiv.classList.remove('hidden');
+            } else {
+                alert(`Error: ${data.error}`);
+            }
+        } catch (error) {
+            console.error("Request failed:", error.message);
+            alert("An error occurred while fetching top tracks.");
+        }
+    };
+
+    // Deduplication function (similar to recommendation.html)
+    function getUniqueTracks(tracks) {
+        const trackSet = new Set();
+        return tracks.filter(track => {
+            const key = `${track.name}|${track.artist}`;
+            if (trackSet.has(key)) return false;
+            trackSet.add(key);
+            return true;
+        });
+    }
+
+    // Function to create track cards
+    function createTrackCard(track) {
+        const div = document.createElement('div');
+        div.className = 'p-4 border rounded-lg shadow hover:bg-gray-50 transition duration-150';
+
+        const title = document.createElement('h4');
+        title.className = 'text-lg font-semibold text-gray-900';
+        title.textContent = track.name;
+
+        const artist = document.createElement('p');
+        artist.className = 'text-sm text-gray-500';
+        artist.textContent = `Artist: ${track.artist}`;
+
+        div.appendChild(title);
+        div.appendChild(artist);
+
+        if (track.embed_url) {
+            const iframe = document.createElement('iframe');
+            iframe.width = "100%";
+            iframe.height = "80";
+            iframe.src = track.embed_url;
+            iframe.frameBorder = "0";
+            iframe.allow = "encrypted-media";
+            iframe.allowFullscreen = true;
+            div.appendChild(iframe);
+        } else {
+            const noPlayer = document.createElement('p');
+            noPlayer.className = 'text-sm text-gray-400';
+            noPlayer.textContent = "Spotify player not available.";
+            div.appendChild(noPlayer);
+        }
+
+        return div;
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
+            </svg>
+            Song Recognition Results
+        </h2>
+
+        {% if recognition_result.audd_result %}
+            <div class="bg-white rounded-lg overflow-hidden">
+                <div class="p-6">
+                    <!-- Song Title and Artist -->
+                    <div class="mb-6">
+                        <h3 class="text-2xl font-bold text-indigo-600">
+                            {{ recognition_result.audd_result.title }}
+                        </h3>
+                        <p class="text-xl text-gray-700 mt-2">
+                            by {{ recognition_result.audd_result.artist }}
+                        </p>
+                    </div>
+                    <!-- Album Artwork -->
+    {% if recognition_result.spotify_details.album.images %}
+    <div class="mb-6">
+        <img 
+            src="{{ recognition_result.spotify_details.album.images.0.url }}" 
+            alt="Album Artwork for {{ recognition_result.spotify_details.album.name }}"
+            class="w-36 h-36 object-cover rounded-lg shadow-lg"
+        >
+    </div>
+    {% endif %}
+                    <!-- Album and Release Date -->
+                    <div class="space-y-3">
+                        <div class="flex items-center text-gray-600">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4a8 8 0 100 16 8 8 0 000-16z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 12v.01"/>
+                            </svg>
+                            <span>Album: {{ recognition_result.audd_result.album }}</span>
+                        </div>
+                        <div class="flex items-center text-gray-600">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            <span>Release Date: {{ recognition_result.audd_result.release_date }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Spotify Details if available -->
+                    {% if recognition_result.spotify_details %}
+                    <div class="mt-6 border-t pt-6">
+                        <h4 class="text-lg font-semibold mb-3">Spotify Version</h4>
+                        <p class="text-gray-600">
+                            {{ recognition_result.spotify_details.name }}
+                            {% if recognition_result.spotify_details.album %}
+                            from {{ recognition_result.spotify_details.album.name }}
+                            {% endif %}
+                        </p>
+                    </div>
+                    {% endif %}
+
+                    <!-- Lyrics Section if available -->
+                    {% if recognition_result.audd_result.lyrics %}
+                    <div class="mt-6 border-t pt-6">
+                        <h4 class="text-lg font-semibold mb-3">Lyrics</h4>
+                        <div class="text-gray-700 whitespace-pre-line">
+                            {{ recognition_result.audd_result.lyrics.lyrics }}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Listen on Spotify Link -->
+                    <div class="mt-6 border-t pt-6">
+                        <a href="{{ recognition_result.audd_result.song_link }}" 
+                        target="_blank"
+                        class="inline-flex items-center space-x-1 text-indigo-600 hover:text-indigo-800 transition-colors duration-200">
+                            <span>Listen on Spotify</span>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="text-center py-8">
+                <p class="text-gray-600">No recognition results available.</p>
+                <a href="/" class="mt-4 inline-block text-indigo-600 hover:text-indigo-800">
+                    Return to home page to identify a song
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    const form = document.getElementById("audio-recognition-form");
+    const audioFileInput = document.getElementById("audio_file");
+    const chooseFileButton = document.getElementById("choose-file-button");
+    const recognitionResult = document.getElementById("recognition-result");
+    const loadingIndicator = document.getElementById("loading-indicator");
+    const errorMessage = document.getElementById("error-message");
+
+    // Update button text when file is chosen
+    audioFileInput.addEventListener("change", function() {
+        const fileName = audioFileInput.files[0]?.name || "Choose File";
+        chooseFileButton.textContent = fileName;
+    });
+
+    // Trigger file input when choose button is clicked
+    chooseFileButton.addEventListener("click", function() {
+        audioFileInput.click();
+    });
+
+    // Handle form submission
+    form.onsubmit = async function(event) {
+        event.preventDefault();
+
+        const audioFile = audioFileInput.files[0];
+        if (!audioFile) {
+            alert("Please select an audio file.");
+            return;
+        }
+
+        // Show loading, hide results
+        loadingIndicator.classList.remove("hidden");
+        recognitionResult.classList.add("hidden");
+        errorMessage.classList.add("hidden");
+
+        const formData = new FormData();
+        formData.append("audio_file", audioFile);
+
+        try {
+            const response = await fetch("{% url 'audio_recognition_view' %}", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value,
+                },
+            });
+            const data = await response.json();
+
+            // Hide loading
+            loadingIndicator.classList.add("hidden");
+            recognitionResult.classList.remove("hidden");
+
+            if (data.error) {
+                // Show error message
+                errorMessage.textContent = data.error;
+                errorMessage.classList.remove("hidden");
+            } else {
+                const auddResult = data.audd_result || {};
+                
+                // Update song info
+                document.querySelector("#song-info h3").textContent = auddResult.title;
+                document.querySelector("#song-info p").textContent = `by ${auddResult.artist}`;
+                
+                // Update album and release date
+                document.getElementById("album-name").textContent = `Album: ${auddResult.album || 'N/A'}`;
+                document.getElementById("release-date").textContent = `Released: ${auddResult.release_date || 'N/A'}`;
+
+                // Handle Spotify preview if available
+                const spotifyPreview = document.getElementById("spotify-preview");
+                if (data.spotify_details && data.spotify_details.preview_url) {
+                    spotifyPreview.innerHTML = `
+                        <div class="border-t pt-4">
+                            <h4 class="text-sm font-semibold text-gray-700 mb-2">Preview</h4>
+                            <audio controls class="w-full">
+                                <source src="${data.spotify_details.preview_url}" type="audio/mpeg">
+                                Your browser does not support the audio element.
+                            </audio>
+                        </div>
+                    `;
+                } else {
+                    spotifyPreview.innerHTML = `
+                        <div class="border-t pt-4">
+                            <p class="text-sm text-gray-500">No preview available</p>
+                        </div>
+                    `;
+                }
+            }
+        } catch (error) {
+            loadingIndicator.classList.add("hidden");
+            errorMessage.textContent = "An error occurred while processing your request.";
+            errorMessage.classList.remove("hidden");
+        }
+    };
+</script>
+{% endblock %}
