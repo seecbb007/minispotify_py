@@ -16,29 +16,37 @@
         {% if recommendations %}
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {% for song in recommendations %}
-            <div class="p-4 border rounded-lg shadow hover:bg-gray-50 transition duration-150">
-                <h4 class="text-lg font-semibold text-gray-900 truncate">{{ song.name }}</h4>
-                <p class="text-sm text-gray-500 truncate">Artist: {{ song.artist }}</p>
+            <div class="p-4 border rounded-lg shadow hover:bg-gray-50 transition duration-150 flex flex-col items-start">
+                <!-- Song Title -->
+                <h4 class="text-lg font-semibold text-gray-900 truncate w-full">{{ song.name|default:"Unknown Song" }}</h4>
+                
+                <!-- Song Artist -->
+                <p class="text-sm text-gray-500 truncate w-full">Artist: {{ song.artist|default:"Unknown Artist" }}</p>
+                
+                <!-- Spotify Player -->
                 {% if song.embed_url %}
+                <div class="w-full mt-3">
                     <iframe 
-                        class="mt-2"
+                        class="rounded-lg" 
                         width="100%" 
-                        height="80" 
+                        height="152" 
                         src="{{ song.embed_url }}" 
                         frameborder="0" 
-                        allow="encrypted-media" 
+                        allow="encrypted-media; autoplay;" 
                         allowfullscreen>
                     </iframe>
+                </div>
                 {% else %}
-                    <p class="mt-2 text-sm text-gray-400">No preview available.</p>
+                <!-- Display message if no embed URL -->
+                <p class="mt-2 text-sm text-gray-400">No preview available.</p>
                 {% endif %}
             </div>
             {% endfor %}
         </div>
         {% else %}
+        <!-- Message when no recommendations are available -->
         <p class="text-center text-gray-500">We couldn’t find recommendations. Like more songs to get personalized picks!</p>
         {% endif %}
     </div>
 </div>
 {% endblock %}
-

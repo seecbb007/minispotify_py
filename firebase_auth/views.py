@@ -145,12 +145,60 @@ def liked_songs_view(request):
             messages.error(request, f'Error fetching liked songs: {str(e)}')
             return redirect('main_page_view')
 
+
+#pick it for you
 from django.shortcuts import render
 import random
 import requests
 import logging
+import requests
+import os
+import base64
+import time
+from dotenv import load_dotenv
+
+# Load the .env file for API tokens
+load_dotenv()
 
 logger = logging.getLogger(__name__)
+
+
+CLIENT_ID = os.getenv('CLIENT_ID')
+CLIENT_SECRET = os.getenv('CLIENT_SECRET')
+
+def get_spotify_access_token():
+    """
+    Get Spotify API access token.
+    """
+    auth_url = "https://accounts.spotify.com/api/token"
+    response = requests.post(auth_url, data={
+        "grant_type": "client_credentials",
+        "client_id": CLIENT_ID,
+        "client_secret": CLIENT_SECRET
+    })
+    return response.json().get("access_token")
+
+def search_spotify_track(track_name, artist_name):
+    """
+    Search for a track on Spotify using track name and artist name.
+    """
+    access_token = get_spotify_access_token()
+    if not access_token:
+        return None
+
+    search_url = "https://api.spotify.com/v1/search"
+    headers = {"Authorization": f"Bearer {access_token}"}
+    params = {
+        "q": f"track:{track_name} artist:{artist_name}",
+        "type": "track",
+        "limit": 1
+    }
+    response = requests.get(search_url, headers=headers, params=params)
+    if response.status_code == 200:
+        tracks = response.json().get("tracks", {}).get("items", [])
+        if tracks:
+            return tracks[0]["id"]  # Return Spotify track ID
+    return None
 
 def pick_it_for_you(request):
     # Ensure the user is logged in
@@ -201,7 +249,7 @@ logger = logging.getLogger(__name__)
 
 def fetch_similar_songs_lastfm(track_name, artist_name):
     """
-    Fetch similar songs using the Last.fm API based on track name and artist name.
+    Fetch similar songs using the Last.fm API and enrich with Spotify embed URLs.
     """
     try:
         API_KEY = "a53a38c3f6cb64b7daadf34cc14c5796"
@@ -212,20 +260,22 @@ def fetch_similar_songs_lastfm(track_name, artist_name):
             "artist": artist_name,
             "api_key": API_KEY,
             "format": "json",
-            "limit": 5  # Number of similar tracks to fetch
+            "limit": 5
         }
         response = requests.get(endpoint, params=params)
         if response.status_code == 200:
             data = response.json()
             similar_tracks = data.get('similartracks', {}).get('track', [])
-            return [
-                {
+            recommendations = []
+            for track in similar_tracks:
+                spotify_id = search_spotify_track(track['name'], track['artist']['name'])
+                embed_url = f"https://open.spotify.com/embed/track/{spotify_id}" if spotify_id else None
+                recommendations.append({
                     "name": track['name'],
                     "artist": track['artist']['name'],
-                    "embed_url": None
-                }
-                for track in similar_tracks
-            ]
+                    "embed_url": embed_url
+                })
+            return recommendations
         else:
             logger.error(f"Last.fm API error: {response.status_code} {response.text}")
             return []

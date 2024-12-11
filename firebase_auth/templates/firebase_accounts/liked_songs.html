@@ -15,28 +15,35 @@
 
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {% for song in liked_songs %}
-                <div class="p-4 border rounded-lg shadow hover:bg-gray-50 transition duration-150">
-                    <h4 class="text-lg font-semibold text-gray-900 truncate">{{ song.name }}</h4>
-                    <p class="text-sm text-gray-500 truncate">Artist: {{ song.artist }}</p>
+                <div class="p-4 border rounded-lg shadow hover:bg-gray-50 transition duration-150 flex flex-col items-start">
+                    <!-- Song Title -->
+                    <h4 class="text-lg font-semibold text-gray-900 truncate w-full">{{ song.name }}</h4>
+                    
+                    <!-- Song Artist -->
+                    <p class="text-sm text-gray-500 truncate w-full">Artist: {{ song.artist }}</p>
+                    
+                    <!-- Player Section -->
                     {% if song.embed_url %}
-                        <iframe 
-                            class="mt-2"
-                            width="100%" 
-                            height="80" 
-                            src="{{ song.embed_url }}" 
-                            frameborder="0" 
-                            allow="encrypted-media" 
-                            allowfullscreen>
-                        </iframe>
+                        <div class="w-full mt-3">
+                            <iframe 
+                                class="rounded-lg" 
+                                width="100%" 
+                                height="152" 
+                                src="{{ song.embed_url }}" 
+                                frameborder="0" 
+                                allow="encrypted-media; autoplay;" 
+                                allowfullscreen>
+                            </iframe>
+                        </div>
                     {% else %}
                         <p class="mt-2 text-sm text-gray-400">Spotify player not available.</p>
                     {% endif %}
                 </div>
             {% empty %}
+                <!-- Message when no liked songs are available -->
                 <p class="text-gray-500">You have not liked any songs yet.</p>
             {% endfor %}
         </div>
     </div>
 </div>
 {% endblock %}
-
