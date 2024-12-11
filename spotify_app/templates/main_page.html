@@ -3,7 +3,7 @@
 <!-- Loads the static template tag to handle static files. -->
 {% load static %}
 <!-- Defines the title block. This sets the title of the page to "Home - Group Music App". -->
-{% block title %}Home - Group Music App{% endblock %}
+{% block title %}Home - EZI Music App{% endblock %}
 
 <!-- Defines the content block. This is where the main content of the page will go. -->
 {% block content %}
@@ -66,14 +66,14 @@
                         <!-- Liked Music Section -->
                         <div class="relative lg:col-span-2">
                             <div class="absolute inset-px rounded-lg bg-white lg:rounded-bl-[2rem]"></div>
-                            <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(theme(borderRadius.lg)+1px)] lg:rounded-bl-[calc(2rem+1px)]">
+                            <a href="{% url 'firebase_auth:liked_songs' %}" class="relative flex h-full flex-col overflow-hidden rounded-[calc(theme(borderRadius.lg)+1px)] lg:rounded-bl-[calc(2rem+1px)] hover:shadow-lg transition-shadow duration-300">
                                 <img class="h-80 object-cover object-left lg:object-right" src="{% static 'images/main_2.png' %}" alt="Main Image2">
                                 <div class="p-10 pt-4">
                                     <h3 class="text-sm/4 font-semibold text-indigo-600">Liked Music</h3>
                                     <p class="mt-2 text-lg font-medium tracking-tight text-gray-950">Liked Music</p>
-                                    <p class="mt-2 max-w-lg text-sm/6 text-gray-600">Liked Music Content</p>
+                                    <p class="mt-2 max-w-lg text-sm/6 text-gray-600">Explore the songs you have liked.</p>
                                 </div>
-                            </div>
+                            </a>
                             <div class="pointer-events-none absolute inset-px rounded-lg shadow ring-1 ring-black/5 lg:rounded-bl-[2rem]"></div>
                         </div>
 
@@ -99,14 +99,17 @@
                                 <div class="p-10 pt-4">
                                     <h3 class="text-sm/4 font-semibold text-indigo-600">Picked For You</h3>
                                     <p class="mt-2 text-lg font-medium tracking-tight text-gray-950">Picked For You</p>
-                                    <p class="mt-2 max-w-lg text-sm/6 text-gray-600">Picked For Your Favoriate.</p>
+                                    <p class="mt-2 max-w-lg text-sm/6 text-gray-600">Based on your favorite songs, enjoy our recommendations!</p>
+                                    <!-- Add a button or link to navigate to the recommendations page -->
+                                    <a href="{% url 'firebase_auth:pick_it_for_you' %}">
+                                        <button class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md transition duration-150">
+                                            Explore Recommendations
+                                        </button>
+                                    </a>
                                 </div>
                             </div>
                             <div class="pointer-events-none absolute inset-px rounded-lg shadow ring-1 ring-black/5 max-lg:rounded-b-[2rem] lg:rounded-br-[2rem]"></div>
                         </div>
-                    </div>
-                </div>
-            </div>
         {% endif %}
 
         <!-- Include the Search Results Template -->

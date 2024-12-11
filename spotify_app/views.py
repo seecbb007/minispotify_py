@@ -143,6 +143,7 @@ def authorize(request):
         "scope": scopes,
         "show_dialog": True  # Forces the authorization dialog to show
     }
+    # constructs a URL for Spotify authentication by combining a base URL with encoded query parameters.
     auth_url = f"{SPOTIFY_AUTH_URL}?{urlencode(params)}"
     return redirect(auth_url)
 
@@ -182,15 +183,19 @@ def callback(request):
     # Redirect to main page
     return redirect('main_page_view')
 
-# Step 4: Refresh Access Token
+# Step 4: Refresh Access Token.
+# OAuth for authentication (such as with Spotify), access tokens have a limited lifespan and need to be refreshed periodically to maintain access without requiring the user to re-authenticate.
 def refresh_token(request):
     refresh_token = request.session.get('refresh_token')
     if not refresh_token:
         return JsonResponse({'error': 'No refresh token available'}, status=400)
 
     try:
+        # Combines the client ID and client secret into a single string separated by a colon.
         auth_string = f"{CLIENT_ID}:{CLIENT_SECRET}"
+        # Encodes the combined string into bytes using UTF-8 encoding.
         auth_bytes = auth_string.encode("utf-8")
+        #  Encodes the bytes object into a Base64-encoded string.
         auth_base64 = base64.b64encode(auth_bytes).decode("utf-8")
 
         headers = {
@@ -203,7 +208,8 @@ def refresh_token(request):
         }
 
         response = requests.post(SPOTIFY_TOKEN_URL, headers=headers, data=data)
-        response.raise_for_status()  # Raises an HTTPError if the status is 4xx, 5xx
+        response.raise_for_status()  # Raises an HTTPError if the status is 4xx, 5xx, is used to raise an exception if the HTTP request returned an unsuccessful status code. 
+        # is used to parse the JSON content of an HTTP response and store it in the variable response_data.
         response_data = response.json()
 
         # Update the session with new tokens
@@ -244,17 +250,21 @@ def analyze_image_view(request):
                 return render(request, 'main_page.html', context)
             
             # Save the uploaded file
+            # Creates an instance of FileSystemStorage that will store files in the directory specified by settings.MEDIA_ROOT.
             fs = FileSystemStorage(location=settings.MEDIA_ROOT)
+            #  This method saves the uploaded file to the storage system.
             filename = fs.save(image_file.name, image_file)
+            # This method returns the URL to access the file.
             file_url = fs.url(filename)
 
             # Debug: Log the image upload information
             print(f"Image saved at: {file_url}")
 
             try:
-                # Call Gemini API to analyze the image
+                # Call Gemini API to analyze the image, This combines the MEDIA_ROOT directory and the filename to create the full path to the image file.
                 analysis_result = analyze_image_with_gemini(os.path.join(settings.MEDIA_ROOT, filename))
-                # Store analysis result in session for pagination
+                # Store analysis result in session for pagination,save the analysis result in the user's session so that it can be accessed later, even across different requests. 
+                # This is useful for persisting data that needs to be available throughout the user's sessio
                 request.session['analysis_result'] = analysis_result
             except Exception as e:
                 print(f"Error in image analysis: {str(e)}")
@@ -264,7 +274,7 @@ def analyze_image_view(request):
         # Debug: Log the Gemini API response
         print(f"Gemini API Response: {analysis_result}")
 
-        # Prepare context with analysis result
+        # Prepare context with analysis result, artist name, and album name for display
         artist_name = None
         album_name = None
         additional_info = analysis_result.get('additional_info', "N/A")
@@ -292,7 +302,9 @@ def analyze_image_view(request):
             
             # Get artists with pagination
             artist_results = search_functions['search_for_artist'](token, artist_name)
+            
             if isinstance(artist_results, list):
+                # Paginate the artist results with 10 artists per page
                 artist_paginator = Paginator(artist_results, 10)  # 10 artists per page
                 artist_page = request.POST.get('artist_page', 1)
 
